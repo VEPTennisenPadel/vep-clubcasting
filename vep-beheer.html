@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.6</title>
+<title>VEP Beheer — Events v4.7</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--red:#ef4444;--red-light:#fef2f2;--radius:10px;--radius-lg:14px;--border:1px solid #e5e7eb;--text:#111827;--muted:#6b7280;--bg:#f9fafb;--white:#fff;--shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -91,7 +91,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
       <p>Beheer de events voor de foto upload-app</p>
     </div>
     <span class="badge badge-admin" style="margin-left:auto">Beheerder</span>
-    <span class="badge badge-version">v4.6</span>
+    <span class="badge badge-version">v4.7</span>
   </div>
   <div class="stats">
     <div class="stat"><p>Totaal events</p><p id="stat-total">—</p></div>
@@ -201,18 +201,20 @@ var editingId = null;
 var msalApp = null;
 var loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
 
-// Load MSAL then init
+// Load MSAL from local file
 function loadScript(url, cb) {
   var s = document.createElement('script');
   s.src = url;
-  s.onload = cb;
+  s.onload = function() { cb(null); };
   s.onerror = function() { cb(new Error('Failed: ' + url)); };
   document.head.appendChild(s);
 }
 
-loadScript('https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js', function(err) {
+var msalLocalUrl = window.location.href.replace(/[^/]*$/, '') + 'msal-browser.min.js';
+loadScript(msalLocalUrl, function(err) {
   if (err || typeof msal === 'undefined') {
-    loadScript('https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js', function(err2) {
+    // Fallback to CDN
+    loadScript('https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js', function(err2) {
       if (err2 || typeof msal === 'undefined') {
         showLoginError('MSAL kon niet geladen worden. Probeer de pagina te herladen.');
       } else {
