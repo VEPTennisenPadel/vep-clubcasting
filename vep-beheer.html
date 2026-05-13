@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.0</title>
+<title>VEP Beheer — Events v4.1</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -98,6 +98,7 @@
   .modal-overlay.open .modal { transform: scale(1); }
   .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 1.25rem; }
 </style>
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 </head>
 <body>
 
@@ -108,7 +109,7 @@
       <h1>VEP Event Beheer</h1>
       <p>Beheer de events voor de foto upload-app</p>
     </div>
-    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.0</span>
+    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.1</span>
   </div>
 
   
@@ -221,7 +222,6 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <script>
 const CONFIG = {
   CLIENT_ID: 'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
