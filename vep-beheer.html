@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.1</title>
+<title>VEP Beheer — Events v4.2</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -99,6 +99,16 @@
   .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 1.25rem; }
 </style>
 <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+if (typeof msal === 'undefined') {
+  document.write('<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"><\/script>');
+}
+</script>
+<script>
+if (typeof msal === 'undefined') {
+  document.write('<script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"><\/script>');
+}
+</script>
 </head>
 <body>
 
@@ -109,7 +119,7 @@
       <h1>VEP Event Beheer</h1>
       <p>Beheer de events voor de foto upload-app</p>
     </div>
-    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.1</span>
+    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.2</span>
   </div>
 
   
