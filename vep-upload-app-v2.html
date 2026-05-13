@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload</title>
+<title>VEP Foto Upload v1.1</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -128,7 +128,7 @@
       <h1>VEP Foto Compilatie</h1>
       <p>Tennis &amp; Padel — Clubcasting</p>
     </div>
-    <span class="badge" id="user-badge">VEP Lid</span>
+    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.1</span>
   </div>
 
   <div class="steps">
@@ -297,7 +297,23 @@
 
 </div>
 
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+// Laad MSAL lokaal of via CDN als fallback
+function loadMSALScript(cb) {
+  var localUrl = window.location.href.replace(/[^/]*$/, '') + 'msal-browser.min.js';
+  var s = document.createElement('script');
+  s.src = localUrl;
+  s.onload = function() { cb(null); };
+  s.onerror = function() {
+    var s2 = document.createElement('script');
+    s2.src = 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';
+    s2.onload = function() { cb(null); };
+    s2.onerror = function() { cb(new Error('MSAL kon niet geladen worden')); };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+}
+</script>
 <script>
 const CONFIG = {
   CLIENT_ID:         'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
@@ -321,17 +337,22 @@ const msalConfig = {
   cache: { cacheLocation: 'sessionStorage' }
 };
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
+var msalInstance = null;
 const loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
 
 var photos = [], selectedEvent = '', selectedLayout = 'full', selectedTitleStyle = 'elegant';
 
-msalInstance.initialize().then(function() {
-  msalInstance.handleRedirectPromise().then(function() {
-    getToken().then(function() {
-      loadEvents();
-    }).catch(function() {
-      msalInstance.loginRedirect(loginRequest);
+loadMSALScript(function(err) {
+  if (err) { console.error('MSAL niet geladen:', err); return; }
+  msalInstance = new msal.PublicClientApplication(msalConfig);
+  msalInstance.initialize().then(function() {
+    msalInstance.handleRedirectPromise().then(function() {
+      var accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        loadEvents();
+      } else {
+        msalInstance.loginRedirect(loginRequest);
+      }
     });
   });
 });
