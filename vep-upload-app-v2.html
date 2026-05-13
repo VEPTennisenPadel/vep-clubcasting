@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v1.1</title>
+<title>VEP Foto Upload v1.2</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -128,7 +128,7 @@
       <h1>VEP Foto Compilatie</h1>
       <p>Tennis &amp; Padel — Clubcasting</p>
     </div>
-    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.1</span>
+    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.2</span>
   </div>
 
   <div class="steps">
@@ -378,7 +378,7 @@ function loadEvents() {
   area.innerHTML = '<div class="events-loading"><span class="spinner"></span> Events laden van VEP agenda...</div>';
   getToken().then(function(token) {
     var today = new Date().toISOString().split('T')[0];
-    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)&$filter=fields/DateTo ge '' + today + ''';
+    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)';
     return fetch(url, { headers: authHeaders(token) });
   }).then(function(resp) {
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
