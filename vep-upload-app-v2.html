@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v1.5</title>
+<title>VEP Foto Upload v1.6</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -128,7 +128,7 @@
       <h1>VEP Foto Compilatie</h1>
       <p>Tennis &amp; Padel — Clubcasting</p>
     </div>
-    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.5</span>
+    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.6</span>
   </div>
 
   <div class="steps">
@@ -318,7 +318,7 @@ function loadMSALScript(cb) {
 const CONFIG = {
   CLIENT_ID:         'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
   TENANT_ID:         '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca',
-  APPS_SCRIPT_URL:   'https://script.google.com/macros/s/AKfycbx3Q8KpnY29wU6_p-niQPK2wGRyUacqem9n7pOqY3pFKG5Z_4rJ6jIGj1YfXkXtfzQ-/exec',
+  APPS_SCRIPT_URL:   'https://script.google.com/macros/s/AKfycbwYMIjaHAvyjRqvOvKD8eD8-B1o97x5TXs9hD3j845kpSV4DzdLNXgZFYWyhu6Eo1-s/exec',
   PRESENTATION_ID:   '1YSUwZy3GoCJhdMs-av0yxakayyvg4SrnoeoAHpPIl6k',
   SHAREPOINT_SITE:   'https://veptennis.sharepoint.com/sites/VooralleVEPSharepoint-gebruikers',
   LIST_NAME:         'VEPEvents',
@@ -565,7 +565,7 @@ function startCompile() {
   var i=0;
   function next(){
     if(i>=STEPS.length){
-      if(CONFIG.APPS_SCRIPT_URL!=='https://script.google.com/macros/s/AKfycbx3Q8KpnY29wU6_p-niQPK2wGRyUacqem9n7pOqY3pFKG5Z_4rJ6jIGj1YfXkXtfzQ-/exec'){
+      if(CONFIG.APPS_SCRIPT_URL!=='https://script.google.com/macros/s/AKfycbwYMIjaHAvyjRqvOvKD8eD8-B1o97x5TXs9hD3j845kpSV4DzdLNXgZFYWyhu6Eo1-s/exec'){
         sendToAppsScript().then(showSuccess).catch(function(e){showError('Fout: '+e.message);});
       } else { showSuccess(); }
       return;
