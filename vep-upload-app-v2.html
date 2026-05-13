@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v1.4</title>
+<title>VEP Foto Upload v1.5</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -128,7 +128,7 @@
       <h1>VEP Foto Compilatie</h1>
       <p>Tennis &amp; Padel — Clubcasting</p>
     </div>
-    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.4</span>
+    <span class="badge" id="user-badge">VEP Lid</span><span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1">v1.5</span>
   </div>
 
   <div class="steps">
@@ -585,7 +585,17 @@ function sendToAppsScript() {
   var layout=selectedLayout==='auto'?bestAutoLayout():selectedLayout;
   var slots={full:1,duo:2,featured:3,grid4:4,strip:3,mosaic:5,cinematic:1};
   var payload={memberName:document.getElementById('in-name').value,eventName:selectedEvent,caption:document.getElementById('in-caption').value,layout:layout,titleStyle:selectedTitleStyle,photos:photos.slice(0,slots[layout]||1).map(function(p){return p.src;}),presentationId:CONFIG.PRESENTATION_ID};
-  return fetch(CONFIG.APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)}).then(function(r){if(!r.ok)throw new Error('Status '+r.status);});
+  // Use no-cors mode — Apps Script antwoordt altijd met opaque response
+  return fetch(CONFIG.APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(function(r) {
+    // no-cors geeft altijd opaque response (status 0) — dit is OK
+    console.log('Apps Script response type:', r.type, 'status:', r.status);
+    return r;
+  });
 }
 function showSuccess(){
   document.getElementById('compiling-card').style.display='none';
