@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events</title>
+<title>VEP Beheer — Events v4.0</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -108,7 +108,7 @@
       <h1>VEP Event Beheer</h1>
       <p>Beheer de events voor de foto upload-app</p>
     </div>
-    <span class="badge badge-admin">Beheerder</span>
+    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.0</span>
   </div>
 
   
@@ -396,8 +396,8 @@ function renderEvents() {
       '<div class="event-meta">' + dateStr + ' · ' + (ev.Category||'Event') + '</div></div>' +
       '<span class="event-badge ' + badgeClass + '">' + badgeText + '</span>' +
       '<div class="event-actions">' +
-      '<button class="btn-icon" onclick="openEditModal('' + ev.id + '')">✏️</button>' +
-      '<button class="btn-danger" onclick="deleteEvent('' + ev.id + '')">🗑</button>' +
+      '<button class="btn-icon" onclick="openEditModal(\'' + ev.id + '\')">✏️</button>' +
+      '<button class="btn-danger" onclick="deleteEvent(\'' + ev.id + '\')">🗑</button>' +
       '</div></div>';
   });
   container.innerHTML = html + '</div>';
