@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.4</title>
+<title>VEP Beheer — Events v4.5</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -98,13 +98,31 @@
   .modal-overlay.open .modal { transform: scale(1); }
   .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 1.25rem; }
 </style>
-<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <script>
-if (typeof msal === 'undefined') {
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';
-  document.head.appendChild(s);
+// Laad MSAL dynamisch en start app pas na laden
+function loadMSAL(callback) {
+  var urls = [
+    'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js',
+    'https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js',
+    'https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js'
+  ];
+  function tryLoad(i) {
+    if (i >= urls.length) {
+      document.getElementById('login-screen').innerHTML = '<div style="padding:2rem;text-align:center;color:#b91c1c">❌ MSAL kon niet geladen worden. Controleer je internetverbinding.</div>';
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = urls[i];
+    s.onload = function() { callback(); };
+    s.onerror = function() { tryLoad(i + 1); };
+    document.head.appendChild(s);
+  }
+  tryLoad(0);
 }
+
+window.addEventListener('DOMContentLoaded', function() {
+  loadMSAL(initApp);
+});
 </script>
 </head>
 <body>
@@ -131,7 +149,7 @@ if (typeof msal === 'undefined') {
       <h1>VEP Event Beheer</h1>
       <p>Beheer de events voor de foto upload-app</p>
     </div>
-    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.4</span>
+    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.5</span>
   </div>
 
   
@@ -245,6 +263,7 @@ if (typeof msal === 'undefined') {
 <div class="toast" id="toast"></div>
 
 <script>
+function initApp() {
 const CONFIG = {
   CLIENT_ID: 'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
   TENANT_ID: '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca',
@@ -507,4 +526,8 @@ function showToast(msg, type) {
 </script>
 </div><!-- /main-app -->
 </body>
-</html>
+</html
+}
+
+</script>
+</body>
