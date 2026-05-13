@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.2</title>
+<title>VEP Beheer — Events v4.3</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -101,12 +101,9 @@
 <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <script>
 if (typeof msal === 'undefined') {
-  document.write('<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"><\/script>');
-}
-</script>
-<script>
-if (typeof msal === 'undefined') {
-  document.write('<script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"><\/script>');
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';
+  document.head.appendChild(s);
 }
 </script>
 </head>
@@ -119,7 +116,7 @@ if (typeof msal === 'undefined') {
       <h1>VEP Event Beheer</h1>
       <p>Beheer de events voor de foto upload-app</p>
     </div>
-    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.2</span>
+    <span class="badge badge-admin">Beheerder</span><span class="badge" style="background:#e0f2fe;color:#0369a1;margin-left:6px">v4.3</span>
   </div>
 
   
@@ -306,7 +303,7 @@ function authHeaders(token) {
 function loadEvents() {
   setLoading(true);
   getToken().then(function(token) {
-    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)&$orderby=fields/DateFrom asc';
+    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)';
     return fetch(url, { headers: authHeaders(token) });
   }).then(function(resp) {
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
