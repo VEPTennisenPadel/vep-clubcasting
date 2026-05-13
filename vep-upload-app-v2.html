@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEP Foto Upload</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75; --green-light: #E1F5EE; --green-dark: #0F6E56;
+    --radius: 10px; --radius-lg: 14px;
+    --border: 1px solid #e5e7eb;
+    --text: #111827; --muted: #6b7280; --bg: #f9fafb; --white: #fff;
+    --shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 560px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; }
+  .logo { width: 42px; height: 42px; border-radius: var(--radius); background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .header h1 { font-size: 17px; font-weight: 700; }
+  .header p { font-size: 13px; color: var(--muted); margin-top: 1px; }
+  .badge { margin-left: auto; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: var(--green-light); color: var(--green-dark); flex-shrink: 0; }
+
+  /* Steps */
+  .steps { display: flex; gap: 4px; margin-bottom: 1.75rem; }
+  .step { flex: 1; display: flex; align-items: center; gap: 5px; padding: 7px 9px; border-radius: var(--radius); border: 1px solid #e5e7eb; font-size: 11px; color: var(--muted); background: var(--white); transition: all .2s; }
+  .step.active { border-color: var(--green); color: var(--green-dark); background: var(--green-light); font-weight: 600; }
+  .step-num { width: 17px; height: 17px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .step.active .step-num, .step.done .step-num { background: var(--green); color: white; }
+
+  /* Card */
+  .card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: .875rem; box-shadow: var(--shadow); }
+  .field { margin-bottom: 1.1rem; }
+  .field:last-of-type { margin-bottom: 0; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+  input[type=text] { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: var(--radius); font-size: 14px; color: var(--text); background: var(--white); outline: none; transition: border-color .15s; }
+  input[type=text]:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+  input[type=file] { display: none; }
+
+  /* Event chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; background: var(--bg); border: 1px solid #d1d5db; font-size: 13px; color: var(--muted); cursor: pointer; transition: all .15s; user-select: none; }
+  .chip:hover { border-color: var(--green); color: var(--green-dark); }
+  .chip.sel { background: var(--green-light); border-color: var(--green); color: var(--green-dark); font-weight: 600; }
+  .chip.past { opacity: .5; }
+
+  /* Loading events */
+  .events-loading { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); padding: 4px 0; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(29,158,117,.3); border-top-color: var(--green); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .events-error { font-size: 13px; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius); padding: 8px 12px; }
+
+  /* Drop zone */
+  .drop-zone { border: 2px dashed #d1d5db; border-radius: var(--radius-lg); padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; transition: all .2s; background: var(--bg); }
+  .drop-zone:hover, .drop-zone.drag { border-color: var(--green); background: var(--green-light); }
+  .dz-icon { font-size: 2rem; margin-bottom: 8px; }
+  .drop-zone p { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .drop-zone span { font-size: 12px; color: var(--muted); }
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 1rem; }
+  .thumb { position: relative; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; border: 1px solid #e5e7eb; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb .rm { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,.6); border: none; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .photo-info { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+
+  /* Layout picker */
+  .layout-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .layout-opt { border: 1px solid #d1d5db; border-radius: var(--radius); padding: 10px 6px 8px; cursor: pointer; text-align: center; transition: all .15s; background: var(--white); }
+  .layout-opt:hover { border-color: var(--green); }
+  .layout-opt.sel { border-color: var(--green); background: var(--green-light); }
+  .lt { width: 100%; aspect-ratio: 16/9; border-radius: 4px; overflow: hidden; background: #1a1a2e; margin-bottom: 6px; display: grid; gap: 2px; padding: 3px; }
+  .lt .lc { border-radius: 2px; background: #3a3a6a; }
+  .layout-name { font-size: 10px; color: var(--muted); font-weight: 600; }
+  .layout-opt.sel .layout-name { color: var(--green-dark); }
+
+  /* Title style chips */
+  .ts-preview { margin-top: .75rem; padding: 10px 14px; border-radius: var(--radius); background: #111122; }
+  .ts-ev { font-size: 11px; }
+  .ts-cap { font-size: 9px; margin-top: 2px; }
+
+  /* Preview */
+  .preview-wrap { border: 1px solid #e5e7eb; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16/9; background: #111122; position: relative; }
+  .preview-canvas { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+  .preview-empty { color: rgba(255,255,255,.25); font-size: 12px; }
+  .prev-label { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); font-size: 9px; color: rgba(255,255,255,.35); white-space: nowrap; letter-spacing: .5px; }
+  .sl-cell { border-radius: 2px; overflow: hidden; background: #2a2a4a; display: flex; align-items: center; justify-content: center; }
+  .sl-cell img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Progress */
+  .prog-list { display: flex; flex-direction: column; gap: 10px; }
+  .prog-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+  .prog-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #e5e7eb; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; transition: all .3s; }
+  .prog-item.active .prog-icon { background: var(--green); border-color: var(--green); color: white; }
+  .prog-item.done .prog-icon { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+  .prog-item.done { color: var(--text); }
+  .prog-bar-wrap { flex: 1; height: 3px; background: #e5e7eb; border-radius: 2px; overflow: hidden; }
+  .prog-bar { height: 100%; background: var(--green); width: 0; transition: width 1.8s ease; border-radius: 2px; }
+  .prog-item.active .prog-bar, .prog-item.done .prog-bar { width: 100%; }
+
+  /* Success */
+  .success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 26px; }
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 1.25rem; }
+  .sm-cell { background: var(--bg); border-radius: var(--radius); padding: 10px 12px; }
+  .sm-cell p:first-child { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; }
+  .sm-cell p:last-child { font-size: 13px; font-weight: 700; }
+  .recent-list { display: flex; flex-direction: column; gap: 6px; margin-top: .875rem; }
+  .recent-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid #e5e7eb; font-size: 13px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 8px; margin-top: 1.25rem; }
+  .btn-p { flex: 1; padding: 11px; border-radius: var(--radius); background: var(--green); color: white; border: none; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background .15s; }
+  .btn-p:hover { background: var(--green-dark); }
+  .btn-p:disabled { opacity: .4; cursor: default; }
+  .btn-s { padding: 11px 16px; border-radius: var(--radius); background: var(--white); color: var(--muted); border: 1px solid #d1d5db; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-s:hover { background: var(--bg); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .error-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: #b91c1c; margin-bottom: .875rem; display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">📷</div>
+    <div>
+      <h1>VEP Foto Compilatie</h1>
+      <p>Tennis &amp; Padel — Clubcasting</p>
+    </div>
+    <span class="badge" id="user-badge">VEP Lid</span>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="s1"><div class="step-num">1</div><span>Info</span></div>
+    <div class="step" id="s2"><div class="step-num">2</div><span>Foto's</span></div>
+    <div class="step" id="s3"><div class="step-num">3</div><span>Layout</span></div>
+    <div class="step" id="s4"><div class="step-num">4</div><span>Verzenden</span></div>
+  </div>
+
+  <div class="error-box" id="error-box"></div>
+
+  <!-- STEP 1 -->
+  <div class="panel active" id="p1">
+    <div class="card">
+      <div class="field">
+        <label>Jouw naam</label>
+        <input type="text" id="in-name" placeholder="bv. Jan Janssen" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Event <span id="events-refresh" style="font-size:10px;color:var(--green);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0" onclick="loadEvents()">↻ vernieuwen</span></label>
+        <div id="events-area">
+          <div class="events-loading"><span class="spinner"></span> Events laden van VEP agenda...</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Bijschrift <span style="font-weight:400;text-transform:none;letter-spacing:0">(optioneel)</span></label>
+        <input type="text" id="in-caption" placeholder="bv. Geweldige sfeer vandaag!">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-p" onclick="goStep(2)">Verder →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="panel" id="p2">
+    <div class="card">
+      <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
+        <div class="dz-icon">📷</div>
+        <p>Klik of sleep foto's hierheen</p>
+        <span>JPG, PNG, WEBP — maximaal 20 foto's</span>
+      </div>
+      <input type="file" id="fi" multiple accept="image/*" onchange="addFiles(this.files)">
+      <div class="photo-grid" id="pg"></div>
+      <div class="photo-info" id="pinfo" style="display:none">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>
+        <span id="pcount"></span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="goStep(1)">← Terug</button>
+      <button class="btn-p" id="btn2next" onclick="goStep(3)" disabled>Verder →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="panel" id="p3">
+    <div class="card">
+      <div class="field">
+        <label>Slide-layout</label>
+        <div class="layout-grid">
+          <div class="layout-opt sel" onclick="selLayout(this,'full')">
+            <div class="lt" style="grid-template-columns:1fr"><div class="lc"></div></div>
+            <div class="layout-name">Fullscreen</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'duo')">
+            <div class="lt" style="grid-template-columns:1fr 1fr"><div class="lc"></div><div class="lc"></div></div>
+            <div class="layout-name">Duo</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'featured')">
+            <div class="lt" style="grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr">
+              <div class="lc" style="grid-row:1/3"></div><div class="lc"></div><div class="lc"></div>
+            </div>
+            <div class="layout-name">Featured</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'grid4')">
+            <div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">
+              <div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div>
+            </div>
+            <div class="layout-name">Grid</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'strip')">
+            <div class="lt" style="grid-template-columns:1fr 1fr 1fr">
+              <div class="lc"></div><div class="lc"></div><div class="lc"></div>
+            </div>
+            <div class="layout-name">Strip</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'mosaic')">
+            <div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr">
+              <div class="lc" style="grid-column:1/3"></div>
+              <div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div>
+            </div>
+            <div class="layout-name">Mozaïek</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'cinematic')">
+            <div class="lt" style="grid-template-rows:4fr 1fr">
+              <div class="lc"></div><div class="lc" style="opacity:.35"></div>
+            </div>
+            <div class="layout-name">Cinematic</div>
+          </div>
+          <div class="layout-opt" onclick="selLayout(this,'auto')">
+            <div class="lt" style="display:flex;align-items:center;justify-content:center;background:#1a1a2e">
+              <span style="font-size:18px">✨</span>
+            </div>
+            <div class="layout-name">Auto</div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Titelstijl</label>
+        <div class="chip-row">
+          <div class="chip sel" onclick="selChip(this,'ts','elegant')">✨ Elegant</div>
+          <div class="chip" onclick="selChip(this,'ts','bold')">💥 Bold</div>
+          <div class="chip" onclick="selChip(this,'ts','minimal')">— Minimaal</div>
+          <div class="chip" onclick="selChip(this,'ts','playful')">🎉 Speels</div>
+        </div>
+        <div class="ts-preview" id="ts-prev">
+          <div class="ts-ev" id="ts-ev" style="color:white;font-weight:500"></div>
+          <div class="ts-cap" id="ts-cap" style="color:rgba(255,255,255,.6)"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Live preview</label>
+        <div class="preview-wrap">
+          <div class="preview-canvas" id="prev-canvas">
+            <span class="preview-empty">Selecteer een layout</span>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:5px">↑ Zo verschijnt de slide op de clubcasting</p>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="goStep(2)">← Terug</button>
+      <button class="btn-p" onclick="goStep(4)">📊 Slide maken →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="panel" id="p4">
+    <div class="card" id="compiling-card">
+      <p style="font-size:14px;font-weight:700;margin-bottom:1rem">Compilatie wordt aangemaakt...</p>
+      <div class="prog-list" id="prog-list"></div>
+    </div>
+    <div class="card" id="success-card" style="display:none">
+      <div style="text-align:center;padding:.5rem 0 .25rem">
+        <div class="success-icon">✅</div>
+        <p style="font-size:17px;font-weight:700;margin-bottom:6px">Slide toegevoegd!</p>
+        <p style="font-size:13px;color:var(--muted)" id="success-msg"></p>
+        <div class="summary-grid">
+          <div class="sm-cell"><p>Lid</p><p id="sm-name">—</p></div>
+          <div class="sm-cell"><p>Event</p><p id="sm-event">—</p></div>
+          <div class="sm-cell"><p>Foto's</p><p id="sm-photos">—</p></div>
+          <div class="sm-cell"><p>Layout</p><p id="sm-layout">—</p></div>
+        </div>
+        <div class="btn-row" style="margin-top:1.25rem">
+          <button class="btn-s" onclick="resetApp()">Nieuwe upload</button>
+          <button class="btn-p" style="flex:none" id="btn-open-slides">🎬 Open presentatie</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="recent-card" style="display:none">
+      <p style="font-size:14px;font-weight:700;margin-bottom:.5rem">Recente uploads</p>
+      <div class="recent-list" id="recent-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+const CONFIG = {
+  CLIENT_ID:         'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
+  TENANT_ID:         '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca',
+  APPS_SCRIPT_URL:   'JOUW_APPS_SCRIPT_URL_HIER',
+  PRESENTATION_ID:   '1bpn3vDi-RQjXsFKkFcXHYHVvox--21VmwIvNFHajXWU',
+  SHAREPOINT_SITE:   'https://veptennis.sharepoint.com/sites/VooralleVEPSharepoint-gebruikers',
+  LIST_NAME:         'VEPEvents',
+  MAX_PHOTOS:        20,
+};
+
+const GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
+const LIST_API = `${GRAPH_BASE}/sites/${encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:')}/lists/${CONFIG.LIST_NAME}/items`;
+
+const msalConfig = {
+  auth: {
+    clientId: CONFIG.CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${CONFIG.TENANT_ID}`,
+    redirectUri: window.location.origin + window.location.pathname,
+  },
+  cache: { cacheLocation: 'sessionStorage' }
+};
+
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+const loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
+
+var photos = [], selectedEvent = '', selectedLayout = 'full', selectedTitleStyle = 'elegant';
+
+msalInstance.initialize().then(function() {
+  msalInstance.handleRedirectPromise().then(function() {
+    getToken().then(function() {
+      loadEvents();
+    }).catch(function() {
+      msalInstance.loginRedirect(loginRequest);
+    });
+  });
+});
+
+function getToken() {
+  var accounts = msalInstance.getAllAccounts();
+  if (accounts.length === 0) return Promise.reject('No accounts');
+  return msalInstance.acquireTokenSilent({
+    scopes: loginRequest.scopes,
+    account: accounts[0]
+  }).then(function(r) { return r.accessToken; })
+  .catch(function() {
+    return msalInstance.acquireTokenPopup(loginRequest).then(function(r) { return r.accessToken; });
+  });
+}
+
+function authHeaders(token) {
+  return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' };
+}
+
+function loadEvents() {
+  var area = document.getElementById('events-area');
+  area.innerHTML = '<div class="events-loading"><span class="spinner"></span> Events laden van VEP agenda...</div>';
+  getToken().then(function(token) {
+    var today = new Date().toISOString().split('T')[0];
+    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)&$filter=fields/DateTo ge '' + today + ''';
+    return fetch(url, { headers: authHeaders(token) });
+  }).then(function(resp) {
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  }).then(function(data) {
+    var evts = data.value.map(function(item) {
+      return {
+        Title: item.fields.Title,
+        DateFrom: (item.fields.DateFrom||'').split('T')[0],
+        DateTo: (item.fields.DateTo||'').split('T')[0],
+        Category: item.fields.Category,
+        Emoji: item.fields.Emoji || '📅'
+      };
+    }).sort(function(a,b) { return a.DateFrom > b.DateFrom ? 1 : -1; });
+    renderEventChips(evts);
+  }).catch(function(e) {
+    area.innerHTML = '<div class="events-error">⚠️ Events konden niet geladen worden: ' + e.message + '</div>';
+  });
+}
+
+function renderEventChips(evts) {
+  var area = document.getElementById('events-area');
+  if (!evts.length) {
+    area.innerHTML = '<div class="events-error">Geen aankomende events beschikbaar.</div>';
+    return;
+  }
+  area.innerHTML = '<div class="chip-row" id="event-chips"></div>';
+  var row = document.getElementById('event-chips');
+  var today = new Date().toISOString().split('T')[0];
+  evts.forEach(function(ev, i) {
+    var emoji = ev.Emoji || getCategoryEmoji(ev.Category);
+    var chip = document.createElement('div');
+    chip.className = 'chip' + (i === 0 ? ' sel' : '');
+    chip.textContent = emoji + ' ' + ev.Title;
+    chip.title = formatDate(ev.DateFrom);
+    chip.onclick = function() {
+      document.querySelectorAll('#event-chips .chip').forEach(function(c) { c.classList.remove('sel'); });
+      chip.classList.add('sel');
+      selectedEvent = ev.Title;
+      updateTsPreview();
+    };
+    row.appendChild(chip);
+    if (i === 0) selectedEvent = ev.Title;
+  });
+  updateTsPreview();
+}
+
+function getCategoryEmoji(cat) {
+  var map = { Tennis:'🎾', Padel:'🏓', Jeugd:'⭐', Club:'🏠', Feest:'🎉', Toernooi:'🏆', Training:'💪' };
+  return map[cat] || '📅';
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  var p = d.split('-');
+  return p[2]+'-'+p[1]+'-'+p[0];
+}
+
+function selChip(el, group, val) {
+  el.closest('.chip-row').querySelectorAll('.chip').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
+  if (group === 'ts') { selectedTitleStyle = val; updateTsPreview(); }
+}
+
+function selLayout(el, key) {
+  selectedLayout = key;
+  document.querySelectorAll('.layout-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+  renderPreview();
+}
+
+function goStep(n) {
+  if (n === 2 && !document.getElementById('in-name').value.trim()) { showError('Vul eerst je naam in.'); return; }
+  if (n === 2 && !selectedEvent) { showError('Kies eerst een event.'); return; }
+  clearError();
+  [1,2,3,4].forEach(function(i) {
+    document.getElementById('p'+i).classList.toggle('active', i === n);
+    var s = document.getElementById('s'+i);
+    s.classList.remove('active','done');
+    if (i < n) { s.classList.add('done'); s.querySelector('.step-num').textContent = '✓'; }
+    if (i === n) s.classList.add('active');
+    if (i >= n) { var sn = s.querySelector('.step-num'); if(sn.textContent==='✓') sn.textContent = i; }
+  });
+  if (n === 3) { updateTsPreview(); renderPreview(); }
+  if (n === 4) startCompile();
+}
+
+function showError(msg) { var b=document.getElementById('error-box'); b.textContent=msg; b.style.display='block'; }
+function clearError() { document.getElementById('error-box').style.display='none'; }
+
+function addFiles(files) {
+  Array.from(files).forEach(function(f) {
+    if (photos.length >= CONFIG.MAX_PHOTOS) return;
+    var r = new FileReader();
+    r.onload = function(e) { photos.push({name:f.name,src:e.target.result}); renderThumbs(); };
+    r.readAsDataURL(f);
+  });
+}
+function renderThumbs() {
+  var g = document.getElementById('pg');
+  g.innerHTML = '';
+  photos.forEach(function(p,i) {
+    var d = document.createElement('div');
+    d.className = 'thumb';
+    d.innerHTML = '<img src="'+p.src+'" alt="'+p.name+'"><button class="rm" onclick="removePhoto('+i+')" aria-label="Verwijder">✕</button>';
+    g.appendChild(d);
+  });
+  var n = photos.length;
+  document.getElementById('pinfo').style.display = n ? 'flex' : 'none';
+  document.getElementById('pcount').textContent = n + " foto" + (n!==1?"'s":'') + " geselecteerd";
+  document.getElementById('btn2next').disabled = n === 0;
+}
+function removePhoto(i) { photos.splice(i,1); renderThumbs(); }
+function onDragOver(e) { e.preventDefault(); document.getElementById('dz').classList.add('drag'); }
+function onDragLeave() { document.getElementById('dz').classList.remove('drag'); }
+function onDrop(e) { e.preventDefault(); onDragLeave(); addFiles(e.dataTransfer.files); }
+
+function updateTsPreview() {
+  var ev = document.getElementById('ts-ev');
+  var cap = document.getElementById('ts-cap');
+  var caption = document.getElementById('in-caption').value || 'Bijschrift verschijnt hier';
+  var styles = {
+    elegant:{ev:'color:white;font-weight:400;letter-spacing:.5px;font-style:italic',cap:'color:rgba(255,255,255,.55);font-style:italic'},
+    bold:{ev:'color:white;font-weight:800;text-transform:uppercase',cap:'color:#4ade80;font-weight:600'},
+    minimal:{ev:'color:rgba(255,255,255,.85);font-weight:300;letter-spacing:1px;font-size:10px;text-transform:uppercase',cap:'color:rgba(255,255,255,.4);font-size:8px'},
+    playful:{ev:'color:#fbbf24;font-weight:700',cap:'color:#34d399;font-weight:500'}
+  };
+  var s = styles[selectedTitleStyle]||styles.elegant;
+  ev.style.cssText=s.ev; ev.textContent=selectedEvent||'Event naam';
+  cap.style.cssText=s.cap; cap.textContent=caption;
+}
+
+function bestAutoLayout() {
+  var n=photos.length;
+  if(n<=1) return 'full'; if(n===2) return 'duo'; if(n===3) return 'featured'; return 'grid4';
+}
+function makeCell(photo,style) {
+  style=style||'';
+  if(photo) return '<div class="sl-cell" style="'+style+'"><img src="'+photo.src+'" alt="foto"></div>';
+  return '<div class="sl-cell" style="'+style+'"><span style="font-size:14px;color:#333366">📷</span></div>';
+}
+function renderPreview() {
+  var canvas=document.getElementById('prev-canvas');
+  var layout=selectedLayout==='auto'?bestAutoLayout():selectedLayout;
+  var caption=document.getElementById('in-caption').value||'';
+  var labelText=selectedEvent+(caption?' — '+caption:'');
+  var p=function(i){return photos[i]||null;};
+  var gs='width:100%;height:100%;display:grid;gap:3px;padding:3px;';
+  var html='';
+  if(layout==='full'){
+    html='<div style="width:100%;height:100%;position:relative">'+(p(0)?'<img src="'+p(0).src+'" style="width:100%;height:100%;object-fit:cover" alt="">':'<div class="sl-cell" style="width:100%;height:100%"><span style="color:#333366;font-size:20px">📷</span></div>')+'<div style="position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75))"><p style="color:#fff;font-size:10px;font-weight:600">'+selectedEvent+'</p>'+(caption?'<p style="color:rgba(255,255,255,.65);font-size:8px;margin-top:1px">'+caption+'</p>':'')+'</div></div>';
+  } else if(layout==='duo'){
+    html='<div style="'+gs+'grid-template-columns:1fr 1fr">'+makeCell(p(0))+makeCell(p(1))+'</div>';
+  } else if(layout==='featured'){
+    html='<div style="'+gs+'grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr">'+makeCell(p(0),'grid-row:1/3')+makeCell(p(1))+makeCell(p(2))+'</div>';
+  } else if(layout==='grid4'){
+    html='<div style="'+gs+'grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">'+[0,1,2,3].map(function(i){return makeCell(p(i));}).join('')+'</div>';
+  } else if(layout==='strip'){
+    html='<div style="'+gs+'grid-template-columns:1fr 1fr 1fr">'+[0,1,2].map(function(i){return makeCell(p(i));}).join('')+'</div>';
+  } else if(layout==='mosaic'){
+    html='<div style="'+gs+'grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr">'+makeCell(p(0),'grid-column:1/3')+[1,2,3,4].map(function(i){return makeCell(p(i));}).join('')+'</div>';
+  } else if(layout==='cinematic'){
+    html='<div style="'+gs+'grid-template-rows:4fr 1fr">'+makeCell(p(0))+'<div class="sl-cell" style="background:#0a0a1a;justify-content:flex-start;padding:0 8px"><p style="color:rgba(255,255,255,.65);font-size:8px;font-style:italic">'+(caption||selectedEvent)+'</p></div></div>';
+  }
+  canvas.innerHTML=html+'<div class="prev-label">'+labelText+'</div>';
+}
+
+const STEPS=[
+  {label:"Foto's comprimeren",icon:'🖼️'},
+  {label:'Layout samenstellen',icon:'🎨'},
+  {label:'Titels toevoegen',icon:'✍️'},
+  {label:'Slide uploaden naar Google Slides',icon:'📤'},
+  {label:'Presentatie bijwerken',icon:'📺'},
+];
+function startCompile() {
+  document.getElementById('compiling-card').style.display='block';
+  document.getElementById('success-card').style.display='none';
+  document.getElementById('recent-card').style.display='none';
+  var list=document.getElementById('prog-list');
+  list.innerHTML='';
+  STEPS.forEach(function(s,i){
+    list.innerHTML+='<div class="prog-item" id="pi'+i+'"><div class="prog-icon" id="pic'+i+'">'+s.icon+'</div><span style="flex:1">'+s.label+'</span><div class="prog-bar-wrap"><div class="prog-bar" id="pb'+i+'"></div></div></div>';
+  });
+  var i=0;
+  function next(){
+    if(i>=STEPS.length){
+      if(CONFIG.APPS_SCRIPT_URL!=='JOUW_APPS_SCRIPT_URL_HIER'){
+        sendToAppsScript().then(showSuccess).catch(function(e){showError('Fout: '+e.message);});
+      } else { showSuccess(); }
+      return;
+    }
+    document.getElementById('pi'+i).classList.add('active');
+    document.getElementById('pb'+i).style.width='100%';
+    setTimeout(function(){
+      document.getElementById('pi'+i).classList.remove('active');
+      document.getElementById('pi'+i).classList.add('done');
+      document.getElementById('pic'+i).textContent='✓';
+      i++; next();
+    }, 700+Math.random()*400);
+  }
+  next();
+}
+function sendToAppsScript() {
+  var layout=selectedLayout==='auto'?bestAutoLayout():selectedLayout;
+  var slots={full:1,duo:2,featured:3,grid4:4,strip:3,mosaic:5,cinematic:1};
+  var payload={memberName:document.getElementById('in-name').value,eventName:selectedEvent,caption:document.getElementById('in-caption').value,layout:layout,titleStyle:selectedTitleStyle,photos:photos.slice(0,slots[layout]||1).map(function(p){return p.src;}),presentationId:CONFIG.PRESENTATION_ID};
+  return fetch(CONFIG.APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)}).then(function(r){if(!r.ok)throw new Error('Status '+r.status);});
+}
+function showSuccess(){
+  document.getElementById('compiling-card').style.display='none';
+  document.getElementById('success-card').style.display='block';
+  document.getElementById('recent-card').style.display='block';
+  var name=document.getElementById('in-name').value||'Lid';
+  var layoutNames={full:'Fullscreen',duo:'Duo',featured:'Featured',grid4:'Grid',strip:'Strip',mosaic:'Mozaïek',cinematic:'Cinematic',auto:'Auto ✨'};
+  document.getElementById('sm-name').textContent=name;
+  document.getElementById('sm-event').textContent=selectedEvent;
+  document.getElementById('sm-photos').textContent=photos.length+" foto's";
+  document.getElementById('sm-layout').textContent=layoutNames[selectedLayout]||selectedLayout;
+  document.getElementById('success-msg').textContent='De slide verschijnt binnenkort op de clubcasting bij VEP.';
+  document.getElementById('btn-open-slides').onclick=function(){window.open('https://docs.google.com/presentation/d/'+CONFIG.PRESENTATION_ID+'/edit','_blank');};
+  var initials=name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+  var row=document.createElement('div');
+  row.className='recent-row';
+  row.innerHTML='<div class="av">'+initials+'</div><span style="flex:1">'+name+'</span><span style="font-size:11px;color:var(--muted)">'+selectedEvent+'</span><span style="margin-left:8px;font-size:11px;font-weight:700;color:var(--green-dark);background:var(--green-light);padding:2px 8px;border-radius:20px">'+photos.length+" foto's"+'</span>';
+  var rl=document.getElementById('recent-list');
+  rl.insertBefore(row,rl.firstChild);
+}
+function resetApp(){
+  photos=[];selectedLayout='full';selectedTitleStyle='elegant';
+  document.getElementById('in-name').value='';
+  document.getElementById('in-caption').value='';
+  document.getElementById('pg').innerHTML='';
+  document.getElementById('pinfo').style.display='none';
+  document.getElementById('btn2next').disabled=true;
+  document.querySelectorAll('.layout-opt').forEach(function(o,i){o.classList.toggle('sel',i===0);});
+  document.querySelectorAll('.chip[onclick*="ts"]').forEach(function(c,i){c.classList.toggle('sel',i===0);});
+  selectedTitleStyle='elegant';
+  goStep(1);
+}
+</script>
+</body>
+</html>

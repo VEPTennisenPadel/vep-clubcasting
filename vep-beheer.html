@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEP Beheer — Events</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75; --green-light: #E1F5EE; --green-dark: #0F6E56;
+    --red: #ef4444; --red-light: #fef2f2;
+    --amber: #f59e0b; --amber-light: #fffbeb;
+    --radius: 10px; --radius-lg: 14px;
+    --border: 1px solid #e5e7eb;
+    --text: #111827; --muted: #6b7280; --bg: #f9fafb; --white: #fff;
+    --shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+  .container { max-width: 680px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .header { display: flex; align-items: center; gap: 12px; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: var(--border); }
+  .logo { width: 40px; height: 40px; border-radius: var(--radius); background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .header h1 { font-size: 17px; font-weight: 700; }
+  .header p { font-size: 13px; color: var(--muted); margin-top: 1px; }
+  .badge { margin-left: auto; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+  .badge-admin { background: #fef3c7; color: #92400e; }
+
+
+  /* Stats row */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stat { background: var(--white); border: var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); }
+  .stat p:first-child { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+  .stat p:last-child { font-size: 22px; font-weight: 700; color: var(--text); }
+
+  /* Add event form */
+  .card { background: var(--white); border: var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .field { margin-bottom: 1rem; }
+  .field:last-of-type { margin-bottom: 0; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; }
+  input[type=text], input[type=date], select, textarea {
+    width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: var(--radius);
+    font-size: 14px; color: var(--text); background: var(--white); outline: none;
+    transition: border-color .15s; font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+  textarea { resize: vertical; min-height: 70px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .emoji-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .emoji-opt { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #d1d5db; background: var(--bg); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .emoji-opt:hover { border-color: var(--green); background: var(--green-light); }
+  .emoji-opt.sel { border-color: var(--green); background: var(--green-light); box-shadow: 0 0 0 2px rgba(29,158,117,.2); }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 8px; margin-top: 1.25rem; }
+  .btn-p { flex: 1; padding: 10px; border-radius: var(--radius); background: var(--green); color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background .15s; }
+  .btn-p:hover { background: var(--green-dark); }
+  .btn-s { padding: 10px 16px; border-radius: var(--radius); background: var(--white); color: var(--muted); border: 1px solid #d1d5db; font-size: 14px; cursor: pointer; }
+  .btn-s:hover { background: var(--bg); }
+  .btn-danger { padding: 6px 10px; border-radius: 8px; background: var(--red-light); color: var(--red); border: 1px solid #fecaca; font-size: 12px; cursor: pointer; transition: all .15s; }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-icon { padding: 6px 10px; border-radius: 8px; background: var(--bg); color: var(--muted); border: 1px solid #e5e7eb; font-size: 12px; cursor: pointer; transition: all .15s; }
+  .btn-icon:hover { background: var(--green-light); color: var(--green-dark); border-color: var(--green); }
+
+  /* Events list */
+  .events-list { display: flex; flex-direction: column; gap: 8px; }
+  .event-row { background: var(--white); border: var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); transition: all .2s; }
+  .event-row:hover { border-color: #d1d5db; }
+  .event-row.past { opacity: .55; }
+  .event-emoji { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+  .event-info { flex: 1; min-width: 0; }
+  .event-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .event-meta { font-size: 12px; color: var(--muted); }
+  .event-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .event-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .badge-upcoming { background: var(--green-light); color: var(--green-dark); }
+  .badge-today { background: #fef3c7; color: #92400e; }
+  .badge-past { background: #f3f4f6; color: var(--muted); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+  .empty .em-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+  .empty p { font-size: 14px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: white; padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none; z-index: 999; max-width: 280px; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: var(--green-dark); }
+  .toast.error { background: var(--red); }
+
+  /* Loading */
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(29,158,117,.3); border-top-color: var(--green); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -3px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Edit modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--white); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,.2); transform: scale(.96); transition: transform .2s; }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 1.25rem; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">⚙️</div>
+    <div>
+      <h1>VEP Event Beheer</h1>
+      <p>Beheer de events voor de foto upload-app</p>
+    </div>
+    <span class="badge badge-admin">Beheerder</span>
+  </div>
+
+  
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><p>Totaal events</p><p id="stat-total">—</p></div>
+    <div class="stat"><p>Komende events</p><p id="stat-upcoming">—</p></div>
+    <div class="stat"><p>Actief vandaag</p><p id="stat-today">—</p></div>
+  </div>
+
+  <!-- Add event form -->
+  <div class="card">
+    <div class="card-title">➕ Nieuw event toevoegen</div>
+    <div class="field">
+      <label>Event naam</label>
+      <input type="text" id="new-name" placeholder="bv. Zomertornooi 2025" maxlength="80">
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Datum van</label>
+        <input type="date" id="new-date-from">
+      </div>
+      <div class="field">
+        <label>Datum tot</label>
+        <input type="date" id="new-date-to">
+      </div>
+    </div>
+    <div class="field">
+      <label>Categorie</label>
+      <select id="new-category">
+        <option value="Tennis">🎾 Tennis</option>
+        <option value="Padel">🏓 Padel</option>
+        <option value="Jeugd">⭐ Jeugd</option>
+        <option value="Club">🏠 Club</option>
+        <option value="Feest">🎉 Feest</option>
+        <option value="Toernooi">🏆 Toernooi</option>
+        <option value="Training">💪 Training</option>
+        <option value="Overig">📅 Overig</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Emoji icoon</label>
+      <div class="emoji-row" id="emoji-row">
+        <div class="emoji-opt sel" data-emoji="🏆" onclick="selEmoji(this)">🏆</div>
+        <div class="emoji-opt" data-emoji="🎾" onclick="selEmoji(this)">🎾</div>
+        <div class="emoji-opt" data-emoji="🏓" onclick="selEmoji(this)">🏓</div>
+        <div class="emoji-opt" data-emoji="⭐" onclick="selEmoji(this)">⭐</div>
+        <div class="emoji-opt" data-emoji="🎉" onclick="selEmoji(this)">🎉</div>
+        <div class="emoji-opt" data-emoji="🏠" onclick="selEmoji(this)">🏠</div>
+        <div class="emoji-opt" data-emoji="💪" onclick="selEmoji(this)">💪</div>
+        <div class="emoji-opt" data-emoji="🌞" onclick="selEmoji(this)">🌞</div>
+        <div class="emoji-opt" data-emoji="🎊" onclick="selEmoji(this)">🎊</div>
+        <div class="emoji-opt" data-emoji="🥇" onclick="selEmoji(this)">🥇</div>
+        <div class="emoji-opt" data-emoji="🌟" onclick="selEmoji(this)">🌟</div>
+        <div class="emoji-opt" data-emoji="📅" onclick="selEmoji(this)">📅</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="clearForm()">Wis</button>
+      <button class="btn-p" onclick="addEvent()">✅ Event toevoegen</button>
+    </div>
+  </div>
+
+  <!-- Events list -->
+  <div class="card">
+    <div class="card-title">
+      📅 Huidige events
+      <span id="loading-spinner" style="display:none"><span class="spinner"></span></span>
+      <button class="btn-icon" style="margin-left:auto;font-size:13px" onclick="loadEvents()">↻ Vernieuwen</button>
+    </div>
+    <div id="events-container">
+      <div class="empty"><div class="em-icon">📅</div><p>Events worden geladen...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">✏️ Event bewerken</div>
+    <input type="hidden" id="edit-id">
+    <div class="field">
+      <label>Event naam</label>
+      <input type="text" id="edit-name" maxlength="80">
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Datum van</label><input type="date" id="edit-date-from"></div>
+      <div class="field"><label>Datum tot</label><input type="date" id="edit-date-to"></div>
+    </div>
+    <div class="field">
+      <label>Categorie</label>
+      <select id="edit-category">
+        <option value="Tennis">🎾 Tennis</option>
+        <option value="Padel">🏓 Padel</option>
+        <option value="Jeugd">⭐ Jeugd</option>
+        <option value="Club">🏠 Club</option>
+        <option value="Feest">🎉 Feest</option>
+        <option value="Toernooi">🏆 Toernooi</option>
+        <option value="Training">💪 Training</option>
+        <option value="Overig">📅 Overig</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="closeEditModal()">Annuleren</button>
+      <button class="btn-p" onclick="saveEdit()">💾 Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+const CONFIG = {
+  CLIENT_ID: 'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
+  TENANT_ID: '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca',
+  SHAREPOINT_SITE: 'https://veptennis.sharepoint.com/sites/VooralleVEPSharepoint-gebruikers',
+  LIST_NAME: 'VEPEvents',
+};
+
+const GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
+const LIST_API = `${GRAPH_BASE}/sites/${encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:')}/lists/${CONFIG.LIST_NAME}/items`;
+
+const msalConfig = {
+  auth: {
+    clientId: CONFIG.CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${CONFIG.TENANT_ID}`,
+    redirectUri: window.location.origin + window.location.pathname,
+  },
+  cache: { cacheLocation: 'sessionStorage' }
+};
+
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+const loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
+
+var events = [];
+var selectedEmoji = '🏆';
+var editingId = null;
+var accessToken = null;
+
+// Init
+msalInstance.initialize().then(function() {
+  // Handle redirect
+  msalInstance.handleRedirectPromise().then(function(resp) {
+    if (resp) accessToken = resp.accessToken;
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('new-date-from').value = today;
+    document.getElementById('new-date-to').value = today;
+    getToken().then(function(token) {
+      accessToken = token;
+      loadEvents();
+    }).catch(function() {
+      // Not logged in yet, login
+      msalInstance.loginRedirect(loginRequest);
+    });
+  }).catch(function(e) {
+    console.error(e);
+  });
+});
+
+function getToken() {
+  var accounts = msalInstance.getAllAccounts();
+  if (accounts.length === 0) return Promise.reject('No accounts');
+  return msalInstance.acquireTokenSilent({
+    scopes: loginRequest.scopes,
+    account: accounts[0]
+  }).then(function(r) {
+    return r.accessToken;
+  }).catch(function() {
+    return msalInstance.acquireTokenPopup(loginRequest).then(function(r) {
+      return r.accessToken;
+    });
+  });
+}
+
+function authHeaders(token) {
+  return {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
+}
+
+function loadEvents() {
+  setLoading(true);
+  getToken().then(function(token) {
+    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)&$orderby=fields/DateFrom asc';
+    return fetch(url, { headers: authHeaders(token) });
+  }).then(function(resp) {
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  }).then(function(data) {
+    events = data.value.map(function(item) {
+      return {
+        id: item.id,
+        Title: item.fields.Title,
+        DateFrom: (item.fields.DateFrom || '').split('T')[0],
+        DateTo: (item.fields.DateTo || '').split('T')[0],
+        Category: item.fields.Category || '',
+        Emoji: item.fields.Emoji || '📅'
+      };
+    });
+    renderEvents();
+    updateStats();
+    setLoading(false);
+  }).catch(function(e) {
+    showToast('Fout bij laden: ' + e.message, 'error');
+    setLoading(false);
+  });
+}
+
+function addEvent() {
+  var name = document.getElementById('new-name').value.trim();
+  var dateFrom = document.getElementById('new-date-from').value;
+  var dateTo = document.getElementById('new-date-to').value || dateFrom;
+  var category = document.getElementById('new-category').value;
+  if (!name) { showToast('Vul een eventnaam in', 'error'); return; }
+  if (!dateFrom) { showToast('Selecteer een startdatum', 'error'); return; }
+
+  getToken().then(function(token) {
+    return fetch(LIST_API, {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify({ fields: { Title: name, DateFrom: dateFrom, DateTo: dateTo, Category: category, Emoji: selectedEmoji } })
+    });
+  }).then(function(resp) {
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    showToast('Event toegevoegd! ✅', 'success');
+    clearForm();
+    loadEvents();
+  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
+}
+
+function deleteEvent(id) {
+  if (!confirm('Dit event verwijderen?')) return;
+  getToken().then(function(token) {
+    return fetch(LIST_API + '/' + id, { method: 'DELETE', headers: authHeaders(token) });
+  }).then(function(resp) {
+    if (!resp.ok && resp.status !== 204) throw new Error('HTTP ' + resp.status);
+    showToast('Event verwijderd', 'success');
+    loadEvents();
+  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
+}
+
+function saveEdit() {
+  var name = document.getElementById('edit-name').value.trim();
+  var dateFrom = document.getElementById('edit-date-from').value;
+  var dateTo = document.getElementById('edit-date-to').value;
+  var category = document.getElementById('edit-category').value;
+  if (!name) { showToast('Vul een naam in', 'error'); return; }
+
+  getToken().then(function(token) {
+    return fetch(LIST_API + '/' + editingId + '/fields', {
+      method: 'PATCH',
+      headers: authHeaders(token),
+      body: JSON.stringify({ Title: name, DateFrom: dateFrom, DateTo: dateTo, Category: category })
+    });
+  }).then(function(resp) {
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    showToast('Event bijgewerkt ✅', 'success');
+    closeEditModal();
+    loadEvents();
+  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
+}
+
+function renderEvents() {
+  var container = document.getElementById('events-container');
+  if (!events.length) {
+    container.innerHTML = '<div class="empty"><div class="em-icon">📅</div><p>Nog geen events. Voeg er een toe hierboven.</p></div>';
+    return;
+  }
+  var today = new Date().toISOString().split('T')[0];
+  var sorted = events.slice().sort(function(a,b) { return a.DateFrom > b.DateFrom ? 1 : -1; });
+  var html = '<div class="events-list">';
+  sorted.forEach(function(ev) {
+    var isPast = ev.DateTo < today;
+    var isToday = ev.DateFrom <= today && ev.DateTo >= today;
+    var badgeClass = isToday ? 'badge-today' : isPast ? 'badge-past' : 'badge-upcoming';
+    var badgeText = isToday ? 'Vandaag' : isPast ? 'Voorbij' : 'Aankomend';
+    var dateStr = ev.DateFrom === ev.DateTo ? formatDate(ev.DateFrom) : formatDate(ev.DateFrom) + ' – ' + formatDate(ev.DateTo);
+    html += '<div class="event-row' + (isPast ? ' past' : '') + '">' +
+      '<div class="event-emoji">' + (ev.Emoji||'📅') + '</div>' +
+      '<div class="event-info"><div class="event-name">' + ev.Title + '</div>' +
+      '<div class="event-meta">' + dateStr + ' · ' + (ev.Category||'Event') + '</div></div>' +
+      '<span class="event-badge ' + badgeClass + '">' + badgeText + '</span>' +
+      '<div class="event-actions">' +
+      '<button class="btn-icon" onclick="openEditModal('' + ev.id + '')">✏️</button>' +
+      '<button class="btn-danger" onclick="deleteEvent('' + ev.id + '')">🗑</button>' +
+      '</div></div>';
+  });
+  container.innerHTML = html + '</div>';
+}
+
+function updateStats() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('stat-total').textContent = events.length;
+  document.getElementById('stat-upcoming').textContent = events.filter(function(e) { return e.DateFrom >= today; }).length;
+  document.getElementById('stat-today').textContent = events.filter(function(e) { return e.DateFrom <= today && e.DateTo >= today; }).length;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  var p = d.split('-');
+  return p[2] + '-' + p[1] + '-' + p[0];
+}
+
+function selEmoji(el) {
+  document.querySelectorAll('.emoji-opt').forEach(function(o) { o.classList.remove('sel'); });
+  el.classList.add('sel');
+  selectedEmoji = el.dataset.emoji;
+}
+
+function clearForm() {
+  document.getElementById('new-name').value = '';
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('new-date-from').value = today;
+  document.getElementById('new-date-to').value = today;
+  document.getElementById('new-category').value = 'Tennis';
+  selectedEmoji = '🏆';
+  document.querySelectorAll('.emoji-opt').forEach(function(o,i) { o.classList.toggle('sel', i===0); });
+}
+
+function openEditModal(id) {
+  var ev = null;
+  for (var i = 0; i < events.length; i++) { if (events[i].id === id) { ev = events[i]; break; } }
+  if (!ev) return;
+  editingId = id;
+  document.getElementById('edit-name').value = ev.Title;
+  document.getElementById('edit-date-from').value = ev.DateFrom;
+  document.getElementById('edit-date-to').value = ev.DateTo;
+  document.getElementById('edit-category').value = ev.Category || 'Tennis';
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editingId = null;
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target === document.getElementById('edit-modal')) closeEditModal();
+});
+
+function setLoading(v) {
+  var el = document.getElementById('loading-spinner');
+  if (el) el.style.display = v ? 'inline' : 'none';
+}
+
+var toastTimer;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type||'success') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
