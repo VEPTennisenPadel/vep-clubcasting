@@ -3,101 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.0</title>
+<title>VEP Foto Upload v2.1</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--radius:10px;--radius-lg:14px;--border:1px solid #e5e7eb;--text:#111827;--muted:#6b7280;--bg:#f9fafb;--white:#fff;--shadow:0 1px 3px rgba(0,0,0,.08)}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.container{max-width:700px;margin:0 auto;padding:1.5rem 1rem 4rem}
+:root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.container{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .header{display:flex;align-items:center;gap:12px;margin-bottom:1.75rem}
-.logo{width:42px;height:42px;border-radius:var(--radius);background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.logo{width:42px;height:42px;border-radius:var(--r);background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .header h1{font-size:17px;font-weight:700}
-.header p{font-size:13px;color:var(--muted);margin-top:1px}
+.header p{font-size:13px;color:var(--m);margin-top:1px}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.badge-g{background:var(--gl);color:var(--gd)}
+.badge-b{background:#e0f2fe;color:#0369a1;margin-left:6px}
 .steps{display:flex;gap:4px;margin-bottom:1.75rem}
-.step{flex:1;display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:var(--radius);border:1px solid #e5e7eb;font-size:11px;color:var(--muted);background:var(--white);transition:all .2s}
-.step.active{border-color:var(--green);color:var(--green-dark);background:var(--green-light);font-weight:600}
-.step.done{color:var(--muted)}
+.step{flex:1;display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:var(--r);border:1px solid #e5e7eb;font-size:11px;color:var(--m);background:var(--w);transition:all .2s}
+.step.active{border-color:var(--green);color:var(--gd);background:var(--gl);font-weight:600}
 .step-num{width:17px;height:17px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-.step.active .step-num,.step.done .step-num{background:var(--green);color:white}
-.card{background:var(--white);border:var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:.875rem;box-shadow:var(--shadow)}
-.field{margin-bottom:1.1rem}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-input[type=text]{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:var(--radius);font-size:14px;color:var(--text);outline:none;transition:border-color .15s}
-input[type=text]:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
+.step.active .step-num,.step.done .step-num{background:var(--green);color:#fff}
+.card{background:var(--w);border:var(--b);border-radius:var(--rl);padding:1.25rem;margin-bottom:.875rem;box-shadow:var(--sh)}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+input[type=text],input[type=number]{padding:9px 12px;border:1px solid #d1d5db;border-radius:var(--r);font-size:14px;color:var(--t);outline:none;transition:border-color .15s;font-family:inherit}
+input[type=text]{width:100%}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
 input[type=file]{display:none}
 .chip-row{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:var(--bg);border:1px solid #d1d5db;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none}
-.chip:hover,.chip.sel{background:var(--green-light);border-color:var(--green);color:var(--green-dark);font-weight:600}
-.drop-zone{border:2px dashed #d1d5db;border-radius:var(--radius-lg);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
-.drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:var(--green-light)}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:1rem}
-.thumb{position:relative;aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid #e5e7eb}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:var(--bg);border:1px solid #d1d5db;font-size:13px;color:var(--m);cursor:pointer;transition:all .15s;user-select:none}
+.chip:hover,.chip.sel{background:var(--gl);border-color:var(--green);color:var(--gd);font-weight:600}
+.drop-zone{border:2px dashed #d1d5db;border-radius:var(--rl);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:var(--gl)}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:1rem}
+.thumb{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;border:1px solid #e5e7eb}
 .thumb img{width:100%;height:100%;object-fit:cover}
-.thumb .rm{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.events-loading{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:4px 0}
+.thumb .rm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(29,158,117,.3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.events-error{font-size:13px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:8px 12px}
+.events-error{font-size:13px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:8px 12px}
 
-/* ── STAP 3: SLIDE EDITOR ── */
+/* ── LAYOUT PICKER ── */
 .layout-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
-.layout-opt{border:1px solid #d1d5db;border-radius:var(--radius);padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s}
-.layout-opt:hover,.layout-opt.sel{border-color:var(--green);background:var(--green-light)}
+.lo{border:1px solid #d1d5db;border-radius:var(--r);padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s}
+.lo:hover,.lo.sel{border-color:var(--green);background:var(--gl)}
 .lt{width:100%;aspect-ratio:16/9;border-radius:4px;background:#1a1a2e;margin-bottom:5px;display:grid;gap:2px;padding:3px}
 .lt .lc{border-radius:2px;background:#3a3a6a}
-.layout-name{font-size:10px;color:var(--muted);font-weight:600}
-.layout-opt.sel .layout-name{color:var(--green-dark)}
+.ln{font-size:10px;color:var(--m);font-weight:600}
+.lo.sel .ln{color:var(--gd)}
 
-/* Slide canvas editor */
-.slide-editor-wrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:#111;border:1px solid #e5e7eb;user-select:none}
-.slide-editor-wrap canvas{display:block;width:100%;height:100%}
+/* ── CANVAS EDITOR ── */
+.editor-wrap{position:relative;width:100%;background:#000;border-radius:var(--r);overflow:hidden;border:1px solid #e5e7eb;touch-action:none}
+.editor-wrap canvas{display:block;width:100%;height:100%}
+.editor-hint{font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
+.editor-hint span{display:flex;align-items:center;gap:4px}
 
-/* Photo crop controls */
-.crop-controls{margin-top:.75rem}
-.crop-photo-tabs{display:flex;gap:6px;margin-bottom:.75rem;flex-wrap:wrap}
-.crop-tab{padding:5px 12px;border-radius:20px;border:1px solid #d1d5db;font-size:12px;cursor:pointer;background:var(--white);color:var(--muted)}
-.crop-tab.active{background:var(--green-light);border-color:var(--green);color:var(--green-dark);font-weight:600}
-.crop-row{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin-bottom:6px}
-.crop-row label{font-size:12px;color:var(--muted);width:60px}
-.crop-row input[type=range]{width:100%;accent-color:var(--green)}
+/* ── TITELBALK CONTROLS ── */
+.tb-panel{background:var(--bg);border:1px solid #e5e7eb;border-radius:var(--r);padding:.875rem;margin-top:.875rem}
+.tb-panel h4{font-size:12px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.75rem}
+.tb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem}
+.tb-field{display:flex;flex-direction:column;gap:4px}
+.tb-field label{font-size:11px;color:var(--m);font-weight:500}
+.tb-field input[type=number]{width:100%;padding:6px 8px;font-size:13px}
+.tb-field input[type=range]{width:100%;accent-color:var(--green)}
+.style-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem}
+.sc{padding:4px 10px;border-radius:20px;border:1px solid #d1d5db;font-size:12px;cursor:pointer;background:var(--w);color:var(--m);transition:all .15s}
+.sc.sel{background:var(--gl);border-color:var(--green);color:var(--gd);font-weight:600}
+.color-row{display:flex;gap:8px;align-items:center;margin-top:.5rem;flex-wrap:wrap}
+.color-row label{font-size:11px;color:var(--m);font-weight:500}
+input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer}
 
-/* Titelbalk controls */
-.titlebar-controls{margin-top:.75rem;padding:.875rem;background:var(--bg);border-radius:var(--radius);border:1px solid #e5e7eb}
-.titlebar-controls h4{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.75rem}
-.ctrl-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:6px}
-.ctrl-row label{font-size:12px;color:var(--muted);white-space:nowrap}
-.ctrl-row input[type=range]{width:100%;accent-color:var(--green)}
-.ctrl-row span{font-size:11px;color:var(--muted);width:36px;text-align:right}
-.ts-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem}
-.ts-chip{padding:4px 10px;border-radius:20px;border:1px solid #d1d5db;font-size:12px;cursor:pointer;background:var(--white);color:var(--muted)}
-.ts-chip.sel{background:var(--green-light);border-color:var(--green);color:var(--green-dark);font-weight:600}
-
-/* Progress */
+/* ── PROGRESS ── */
 .prog-list{display:flex;flex-direction:column;gap:10px}
-.prog-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.prog-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--m)}
 .prog-icon{width:28px;height:28px;border-radius:50%;border:1px solid #e5e7eb;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .3s}
-.prog-item.active .prog-icon{background:var(--green);border-color:var(--green);color:white}
-.prog-item.done .prog-icon{background:var(--green-light);border-color:var(--green);color:var(--green-dark)}
-.prog-item.done{color:var(--text)}
+.prog-item.active .prog-icon{background:var(--green);border-color:var(--green);color:#fff}
+.prog-item.done .prog-icon{background:var(--gl);border-color:var(--green);color:var(--gd)}
+.prog-item.done{color:var(--t)}
 .prog-bar-wrap{flex:1;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden}
-.prog-bar{height:100%;background:var(--green);width:0;transition:width 1.8s ease;border-radius:2px}
+.prog-bar{height:100%;background:var(--green);width:0;transition:width 1.5s ease;border-radius:2px}
 .prog-item.active .prog-bar,.prog-item.done .prog-bar{width:100%}
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.25rem}
-.sm-cell{background:var(--bg);border-radius:var(--radius);padding:10px 12px}
-.sm-cell p:first-child{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.sm-cell p:last-child{font-size:13px;font-weight:700}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem}
+.sum-cell{background:var(--bg);border-radius:var(--r);padding:10px 12px}
+.sum-cell p:first-child{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.sum-cell p:last-child{font-size:13px;font-weight:700}
 .recent-list{display:flex;flex-direction:column;gap:6px;margin-top:.875rem}
-.recent-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);border:1px solid #e5e7eb;font-size:13px}
-.av{width:28px;height:28px;border-radius:50%;background:var(--green-light);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.recent-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);border:1px solid #e5e7eb;font-size:13px}
+.av{width:28px;height:28px;border-radius:50%;background:var(--gl);color:var(--gd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .btn-row{display:flex;gap:8px;margin-top:1.25rem}
-.btn-p{flex:1;padding:11px;border-radius:var(--radius);background:var(--green);color:white;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
-.btn-p:hover{background:var(--green-dark)}
+.btn-p{flex:1;padding:11px;border-radius:var(--r);background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
+.btn-p:hover{background:var(--gd)}
 .btn-p:disabled{opacity:.4;cursor:default}
-.btn-s{padding:11px 16px;border-radius:var(--radius);background:var(--white);color:var(--muted);border:1px solid #d1d5db;font-size:14px;font-weight:500;cursor:pointer}
+.btn-s{padding:11px 16px;border-radius:var(--r);background:var(--w);color:var(--m);border:1px solid #d1d5db;font-size:14px;font-weight:500;cursor:pointer}
 .panel{display:none}
 .panel.active{display:block}
-.error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:.875rem;display:none}
-.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.err{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:.875rem;display:none}
 </style>
 </head>
 <body>
@@ -105,8 +103,8 @@ input[type=file]{display:none}
   <div class="header">
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
-    <span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--green-light);color:var(--green-dark)" id="user-badge">VEP Lid</span>
-    <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1;margin-left:6px">v2.0</span>
+    <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
+    <span class="badge badge-b">v2.1</span>
   </div>
 
   <div class="steps">
@@ -116,17 +114,17 @@ input[type=file]{display:none}
     <div class="step" id="s4"><div class="step-num">4</div><span>Verzenden</span></div>
   </div>
 
-  <div class="error-box" id="error-box"></div>
+  <div class="err" id="err"></div>
 
   <!-- STAP 1 -->
   <div class="panel active" id="p1">
     <div class="card">
       <div class="field"><label>Jouw naam</label><input type="text" id="in-name" placeholder="bv. Jan Janssen" autocomplete="name"></div>
       <div class="field">
-        <label>Event <span style="font-size:10px;color:var(--green);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0" onclick="loadEvents()">↻ vernieuwen</span></label>
-        <div id="events-area"><div class="events-loading"><span class="spinner"></span> Events laden...</div></div>
+        <label>Event <span style="font-size:10px;color:var(--green);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0" onclick="loadEvents()">↻</span></label>
+        <div id="events-area"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--m)"><span class="spinner"></span> Events laden...</div></div>
       </div>
-      <div class="field"><label>Bijschrift <span style="font-weight:400;text-transform:none;letter-spacing:0">(optioneel)</span></label><input type="text" id="in-caption" placeholder="bv. Geweldige sfeer vandaag!"></div>
+      <div class="field"><label>Bijschrift <span style="font-weight:400;text-transform:none;letter-spacing:0">(optioneel)</span></label><input type="text" id="in-caption" placeholder="bv. Geweldige sfeer!"></div>
     </div>
     <div class="btn-row"><button class="btn-p" onclick="goStep(2)">Verder →</button></div>
   </div>
@@ -136,101 +134,80 @@ input[type=file]{display:none}
     <div class="card">
       <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
         <div style="font-size:2rem;margin-bottom:8px">📷</div>
-        <p style="font-size:14px;font-weight:600;margin-bottom:4px">Klik of sleep foto's hierheen</p>
-        <span style="font-size:12px;color:var(--muted)">JPG, PNG, WEBP — maximaal 20 foto's</span>
+        <p style="font-size:14px;font-weight:600;margin-bottom:4px">Klik of sleep foto's</p>
+        <span style="font-size:12px;color:var(--m)">JPG, PNG, WEBP — max 20 foto's</span>
       </div>
       <input type="file" id="fi" multiple accept="image/*" onchange="addFiles(this.files)">
       <div class="photo-grid" id="pg"></div>
-      <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--muted)" id="pinfo" style="display:none">
+      <div style="display:none;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--m)" id="pinfo">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>
         <span id="pcount"></span>
       </div>
     </div>
     <div class="btn-row">
       <button class="btn-s" onclick="goStep(1)">← Terug</button>
-      <button class="btn-p" id="btn2next" onclick="goStep(3)" disabled>Verder →</button>
+      <button class="btn-p" id="btn2" onclick="goStep(3)" disabled>Verder →</button>
     </div>
   </div>
 
-  <!-- STAP 3: SLIDE EDITOR -->
+  <!-- STAP 3: EDITOR -->
   <div class="panel" id="p3">
     <div class="card">
-      <!-- Layout kiezen -->
+      <!-- Layout -->
       <div class="field">
         <label>Layout</label>
         <div class="layout-grid">
-          <div class="layout-opt sel" onclick="selLayout(this,'full')">
-            <div class="lt" style="grid-template-columns:1fr"><div class="lc"></div></div>
-            <div class="layout-name">Fullscreen</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'duo')">
-            <div class="lt" style="grid-template-columns:1fr 1fr"><div class="lc"></div><div class="lc"></div></div>
-            <div class="layout-name">Duo</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'featured')">
-            <div class="lt" style="grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr"><div class="lc" style="grid-row:1/3"></div><div class="lc"></div><div class="lc"></div></div>
-            <div class="layout-name">Featured</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'grid4')">
-            <div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div>
-            <div class="layout-name">Grid</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'strip')">
-            <div class="lt" style="grid-template-columns:1fr 1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div></div>
-            <div class="layout-name">Strip</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'mosaic')">
-            <div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr"><div class="lc" style="grid-column:1/3"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div>
-            <div class="layout-name">Mozaïek</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'cinematic')">
-            <div class="lt" style="grid-template-rows:4fr 1fr"><div class="lc"></div><div class="lc" style="opacity:.35"></div></div>
-            <div class="layout-name">Cinematic</div>
-          </div>
-          <div class="layout-opt" onclick="selLayout(this,'auto')">
-            <div class="lt" style="display:flex;align-items:center;justify-content:center"><span style="font-size:18px">✨</span></div>
-            <div class="layout-name">Auto</div>
-          </div>
+          <div class="lo sel" onclick="selLayout(this,'full')"><div class="lt" style="grid-template-columns:1fr"><div class="lc"></div></div><div class="ln">Fullscreen</div></div>
+          <div class="lo" onclick="selLayout(this,'duo')"><div class="lt" style="grid-template-columns:1fr 1fr"><div class="lc"></div><div class="lc"></div></div><div class="ln">Duo</div></div>
+          <div class="lo" onclick="selLayout(this,'featured')"><div class="lt" style="grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr"><div class="lc" style="grid-row:1/3"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Featured</div></div>
+          <div class="lo" onclick="selLayout(this,'grid4')"><div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Grid</div></div>
+          <div class="lo" onclick="selLayout(this,'strip')"><div class="lt" style="grid-template-columns:1fr 1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Strip</div></div>
+          <div class="lo" onclick="selLayout(this,'mosaic')"><div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr"><div class="lc" style="grid-column:1/3"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Mozaïek</div></div>
+          <div class="lo" onclick="selLayout(this,'cinematic')"><div class="lt" style="grid-template-rows:4fr 1fr"><div class="lc"></div><div class="lc" style="opacity:.35"></div></div><div class="ln">Cinematic</div></div>
+          <div class="lo" onclick="selLayout(this,'auto')"><div class="lt" style="display:flex;align-items:center;justify-content:center"><span style="font-size:18px">✨</span></div><div class="ln">Auto</div></div>
         </div>
       </div>
 
-      <!-- Live slide preview (canvas) -->
+      <!-- Canvas editor -->
       <div class="field">
-        <label>Live preview — sleep de titelbalk en pas foto's aan</label>
-        <div class="slide-editor-wrap" id="slide-editor-wrap">
-          <canvas id="slide-canvas"></canvas>
+        <label>Slide editor</label>
+        <div class="editor-wrap" id="editor-wrap">
+          <canvas id="C"></canvas>
         </div>
-        <p class="hint">💡 Sleep de titelbalk naar een andere positie · Draai met het rotatie-handvat</p>
-      </div>
-
-      <!-- Foto crop controls -->
-      <div class="crop-controls" id="crop-controls">
-        <label style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Foto aanpassen</label>
-        <div class="crop-photo-tabs" id="crop-tabs"></div>
-        <div id="crop-sliders">
-          <div class="crop-row"><label>↔ Horizontaal</label><input type="range" id="crop-x" min="0" max="100" value="50" oninput="onCropChange()"></div>
-          <div class="crop-row"><label>↕ Verticaal</label><input type="range" id="crop-y" min="0" max="100" value="50" oninput="onCropChange()"></div>
-          <div class="crop-row"><label>🔍 Zoom</label><input type="range" id="crop-zoom" min="100" max="300" value="100" oninput="onCropChange()"></div>
+        <div class="editor-hint">
+          <span>🖱️ Sleep op foto = verschuif uitsnede</span>
+          <span>⌨️ Ctrl + scroll = zoom foto</span>
+          <span>✋ Sleep titelbalk = verplaats</span>
+          <span>↔️ Sleep rand titelbalk = resize</span>
         </div>
       </div>
 
-      <!-- Titelbalk controls -->
-      <div class="titlebar-controls">
-        <h4>Titelbalk</h4>
-        <div class="ctrl-row"><label>Hoogte</label><input type="range" id="tb-height" min="30" max="150" value="60" oninput="renderSlide()"><span id="tb-height-val">60px</span></div>
-        <div class="ctrl-row"><label>Transparantie</label><input type="range" id="tb-opacity" min="0" max="100" value="88" oninput="renderSlide()"><span id="tb-opacity-val">88%</span></div>
-        <div class="ctrl-row"><label>Tekstgrootte</label><input type="range" id="tb-fontsize" min="12" max="48" value="24" oninput="renderSlide()"><span id="tb-fontsize-val">24px</span></div>
-        <div class="ctrl-row"><label>Rotatie</label><input type="range" id="tb-rotate" min="-45" max="45" value="0" oninput="renderSlide()"><span id="tb-rotate-val">0°</span></div>
-        <div style="margin-top:8px">
-          <label style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px">Stijl</label>
-          <div class="ts-chips">
-            <div class="ts-chip sel" onclick="selTS(this,'elegant')">✨ Elegant</div>
-            <div class="ts-chip" onclick="selTS(this,'bold')">💥 Bold</div>
-            <div class="ts-chip" onclick="selTS(this,'minimal')">— Minimaal</div>
-            <div class="ts-chip" onclick="selTS(this,'playful')">🎉 Speels</div>
+      <!-- Titelbalk instellingen -->
+      <div class="tb-panel">
+        <h4>Titelbalk instellingen</h4>
+        <div class="tb-grid">
+          <div class="tb-field"><label>Breedte (px)</label><input type="number" id="tb-w" value="1920" min="200" max="1920" oninput="render()"></div>
+          <div class="tb-field"><label>Hoogte (px)</label><input type="number" id="tb-h" value="80" min="30" max="300" oninput="render()"></div>
+        </div>
+        <div class="tb-grid">
+          <div class="tb-field"><label>Transparantie %</label><input type="number" id="tb-op" value="88" min="0" max="100" oninput="render()"></div>
+          <div class="tb-field"><label>Rotatie °</label><input type="number" id="tb-rot" value="0" min="-180" max="180" oninput="render()"></div>
+        </div>
+        <div class="color-row">
+          <label>Achtergrondkleur</label>
+          <input type="color" id="tb-color" value="#050514" oninput="render()">
+          <label style="margin-left:12px">Tekstkleur</label>
+          <input type="color" id="tb-textcolor" value="#ffffff" oninput="render()">
+        </div>
+        <div style="margin-top:.75rem">
+          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Stijl</label>
+          <div class="style-chips">
+            <div class="sc sel" onclick="selSC(this,'elegant')">✨ Elegant</div>
+            <div class="sc" onclick="selSC(this,'bold')">💥 Bold</div>
+            <div class="sc" onclick="selSC(this,'minimal')">— Minimaal</div>
+            <div class="sc" onclick="selSC(this,'playful')">🎉 Speels</div>
           </div>
         </div>
-        <p class="hint" style="margin-top:8px">💡 Sleep de titelbalk in de preview naar de gewenste positie</p>
       </div>
     </div>
     <div class="btn-row">
@@ -241,539 +218,546 @@ input[type=file]{display:none}
 
   <!-- STAP 4 -->
   <div class="panel" id="p4">
-    <div class="card" id="compiling-card">
+    <div class="card" id="comp-card">
       <p style="font-size:14px;font-weight:700;margin-bottom:1rem">Compilatie wordt aangemaakt...</p>
       <div class="prog-list" id="prog-list"></div>
     </div>
-    <div class="card" id="success-card" style="display:none">
+    <div class="card" id="ok-card" style="display:none">
       <div style="text-align:center;padding:.5rem 0">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem">✅</div>
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem">✅</div>
         <p style="font-size:17px;font-weight:700;margin-bottom:6px">Slide toegevoegd!</p>
-        <p style="font-size:13px;color:var(--muted)">De slide verschijnt binnenkort op de clubcasting bij VEP.</p>
-        <div class="summary-grid">
-          <div class="sm-cell"><p>Lid</p><p id="sm-name">—</p></div>
-          <div class="sm-cell"><p>Event</p><p id="sm-event">—</p></div>
-          <div class="sm-cell"><p>Foto's</p><p id="sm-photos">—</p></div>
-          <div class="sm-cell"><p>Layout</p><p id="sm-layout">—</p></div>
+        <p style="font-size:13px;color:var(--m)">De slide verschijnt binnenkort op de clubcasting bij VEP.</p>
+        <div class="sum-grid">
+          <div class="sum-cell"><p>Lid</p><p id="sm-name">—</p></div>
+          <div class="sum-cell"><p>Event</p><p id="sm-event">—</p></div>
+          <div class="sum-cell"><p>Foto's</p><p id="sm-photos">—</p></div>
+          <div class="sum-cell"><p>Layout</p><p id="sm-layout">—</p></div>
         </div>
         <div class="btn-row" style="margin-top:1.25rem">
           <button class="btn-s" onclick="resetApp()">Nieuwe upload</button>
-          <button class="btn-p" style="flex:none" id="btn-open-slides">🎬 Open presentatie</button>
+          <button class="btn-p" style="flex:none" id="btn-open">🎬 Open presentatie</button>
         </div>
       </div>
     </div>
-    <div class="card" id="recent-card" style="display:none">
+    <div class="card" id="rec-card" style="display:none">
       <p style="font-size:14px;font-weight:700;margin-bottom:.5rem">Recente uploads</p>
-      <div class="recent-list" id="recent-list"></div>
+      <div class="recent-list" id="rec-list"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────
-var CONFIG = {
+// ─────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────
+var CFG = {
   CLIENT_ID:       'b2e58045-5ea5-41e5-ae2d-7546465fd54d',
   TENANT_ID:       '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca',
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzXBA4HllGITD6rM-di97Y0JGQLVGI6DCRxpiflkv9gHOjlMG7leGe6zXIRka8zC2rS/exec',
   PRESENTATION_ID: '1YSUwZy3GoCJhdMs-av0yxakayyvg4SrnoeoAHpPIl6k',
   SHAREPOINT_SITE: 'https://veptennis.sharepoint.com/sites/VooralleVEPSharepoint-gebruikers',
   LIST_NAME:       'VEPEvents',
-  MAX_PHOTOS:      20,
 };
 
-// ── MSAL ────────────────────────────────────────────────
-var msalInstance = null;
-var loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
-var GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
-var LIST_API = GRAPH_BASE + '/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/' + CONFIG.LIST_NAME + '/items';
+// ─────────────────────────────────────────────────────────
+// MSAL
+// ─────────────────────────────────────────────────────────
+var msalApp = null;
+var loginReq = { scopes: ['Sites.ReadWrite.All','User.Read'] };
+var LIST_API = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/' + CFG.LIST_NAME + '/items';
 
-function loadMSALScript(cb) {
-  var localUrl = window.location.href.replace(/[^/]*$/, '') + 'msal-browser.min.js';
+(function loadMSAL() {
   var s = document.createElement('script');
-  s.src = localUrl;
-  s.onload = function() { cb(null); };
+  s.src = window.location.href.replace(/[^/]*$/,'') + 'msal-browser.min.js';
+  s.onload = initMSAL;
   s.onerror = function() {
     var s2 = document.createElement('script');
     s2.src = 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js';
-    s2.onload = function() { cb(null); };
-    s2.onerror = function() { cb(new Error('MSAL kon niet geladen worden')); };
+    s2.onload = initMSAL;
     document.head.appendChild(s2);
   };
   document.head.appendChild(s);
-}
+})();
 
-loadMSALScript(function(err) {
-  if (err) { console.error('MSAL niet geladen'); return; }
-  var msalConfig = {
-    auth: { clientId: CONFIG.CLIENT_ID, authority: 'https://login.microsoftonline.com/' + CONFIG.TENANT_ID, redirectUri: window.location.href.split('?')[0].split('#')[0] },
-    cache: { cacheLocation: 'sessionStorage' }
-  };
-  msalInstance = new msal.PublicClientApplication(msalConfig);
-  msalInstance.initialize().then(function() {
-    msalInstance.handleRedirectPromise().then(function() {
-      var accounts = msalInstance.getAllAccounts();
-      if (accounts.length === 0) msalInstance.loginRedirect(loginRequest);
+function initMSAL() {
+  msalApp = new msal.PublicClientApplication({
+    auth:{ clientId:CFG.CLIENT_ID, authority:'https://login.microsoftonline.com/'+CFG.TENANT_ID, redirectUri:location.href.split('?')[0].split('#')[0] },
+    cache:{ cacheLocation:'sessionStorage' }
+  });
+  msalApp.initialize().then(function() {
+    msalApp.handleRedirectPromise().then(function() {
+      if (!msalApp.getAllAccounts().length) msalApp.loginRedirect(loginReq);
       else loadEvents();
     });
   });
-});
+}
 
 function getToken() {
-  var accounts = msalInstance ? msalInstance.getAllAccounts() : [];
-  if (!accounts.length) return Promise.reject('Niet ingelogd');
-  return msalInstance.acquireTokenSilent({ scopes: loginRequest.scopes, account: accounts[0] })
-    .then(function(r) { return r.accessToken; })
-    .catch(function() { return msalInstance.acquireTokenPopup(loginRequest).then(function(r) { return r.accessToken; }); });
+  var accs = msalApp ? msalApp.getAllAccounts() : [];
+  if (!accs.length) return Promise.reject('Niet ingelogd');
+  return msalApp.acquireTokenSilent({scopes:loginReq.scopes,account:accs[0]})
+    .then(function(r){return r.accessToken;})
+    .catch(function(){return msalApp.acquireTokenPopup(loginReq).then(function(r){return r.accessToken;});});
 }
 
-// ── STATE ────────────────────────────────────────────────
-var photos = [];
+// ─────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────
+var photos = [];          // {name, src}
+var imgs = [];            // HTMLImageElement[]
+var cropState = [];       // {ox,oy,zoom} per foto (offset in image-pixels, zoom factor)
 var selectedEvent = '';
 var selectedLayout = 'full';
-var selectedTitleStyle = 'elegant';
-var activeCropPhoto = 0;
-// Per foto: {x: 0-1, y: 0-1, zoom: 1-3}
-var cropSettings = [];
-// Titelbalk positie (in canvas-pixels, relatief aan 1920x1080)
-var titlebarPos = { x: 0, y: null, rotation: 0 }; // y=null = onderaan
-var titlebarDragging = false;
-var titlebarDragStart = null;
-var loadedImages = []; // HTMLImageElement per foto
+var selectedStyle = 'elegant';
 
-// ── EVENTS LADEN ────────────────────────────────────────
+// Titelbalk state (in canvas-pixels 1920x1080)
+var TB = { x:0, y:null, w:1920, h:80, rot:0, opacity:0.88, color:'#050514', textColor:'#ffffff' };
+
+// ─────────────────────────────────────────────────────────
+// EVENTS
+// ─────────────────────────────────────────────────────────
 function loadEvents() {
-  var area = document.getElementById('events-area');
-  area.innerHTML = '<div class="events-loading"><span class="spinner"></span> Events laden...</div>';
-  getToken().then(function(token) {
-    var today = new Date().toISOString().split('T')[0];
-    var url = LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)';
-    return fetch(url, { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' } });
-  }).then(function(r) { return r.json(); })
-  .then(function(data) {
-    var evts = data.value.map(function(item) {
-      return { Title: item.fields.Title, DateFrom: (item.fields.DateFrom||'').split('T')[0], Emoji: item.fields.Emoji || '📅' };
-    }).sort(function(a,b) { return a.DateFrom > b.DateFrom ? 1 : -1; });
-    renderEventChips(evts);
-  }).catch(function() {
-    area.innerHTML = '<div class="events-error">Events konden niet geladen worden.</div>';
-  });
+  var a = document.getElementById('events-area');
+  a.innerHTML = '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--m)"><span class="spinner"></span> Laden...</div>';
+  getToken().then(function(tok) {
+    return fetch(LIST_API+'?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)', {headers:{'Authorization':'Bearer '+tok,'Accept':'application/json'}});
+  }).then(function(r){return r.json();})
+  .then(function(d) {
+    var evts = (d.value||[]).map(function(i){return{Title:i.fields.Title,Emoji:i.fields.Emoji||'📅',DateFrom:(i.fields.DateFrom||'').split('T')[0]};})
+      .sort(function(a,b){return a.DateFrom>b.DateFrom?1:-1;});
+    if (!evts.length){a.innerHTML='<div class="events-error">Geen events gevonden.</div>';return;}
+    a.innerHTML='<div class="chip-row" id="ec"></div>';
+    var row=document.getElementById('ec');
+    evts.forEach(function(ev,i){
+      var c=document.createElement('div'); c.className='chip'+(i===0?' sel':'');
+      c.textContent=ev.Emoji+' '+ev.Title;
+      c.onclick=function(){document.querySelectorAll('#ec .chip').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');selectedEvent=ev.Title;};
+      row.appendChild(c);
+      if(i===0) selectedEvent=ev.Title;
+    });
+  }).catch(function(){a.innerHTML='<div class="events-error">Events konden niet geladen worden.</div>';});
 }
 
-function renderEventChips(evts) {
-  var area = document.getElementById('events-area');
-  if (!evts.length) { area.innerHTML = '<div class="events-error">Geen aankomende events.</div>'; return; }
-  area.innerHTML = '<div class="chip-row" id="event-chips"></div>';
-  var row = document.getElementById('event-chips');
-  evts.forEach(function(ev, i) {
-    var chip = document.createElement('div');
-    chip.className = 'chip' + (i===0?' sel':'');
-    chip.textContent = (ev.Emoji||'📅') + ' ' + ev.Title;
-    chip.onclick = function() {
-      document.querySelectorAll('#event-chips .chip').forEach(function(c){c.classList.remove('sel');});
-      chip.classList.add('sel'); selectedEvent = ev.Title;
-    };
-    row.appendChild(chip);
-    if (i===0) selectedEvent = ev.Title;
-  });
-}
-
-// ── FILES ────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// FILES
+// ─────────────────────────────────────────────────────────
 function addFiles(files) {
   Array.from(files).forEach(function(f) {
-    if (photos.length >= CONFIG.MAX_PHOTOS) return;
+    if (photos.length >= 20) return;
     var r = new FileReader();
     r.onload = function(e) {
-      photos.push({ name: f.name, src: e.target.result });
-      cropSettings.push({ x: 0.5, y: 0.5, zoom: 1 });
+      photos.push({name:f.name, src:e.target.result});
+      cropState.push({ox:0, oy:0, zoom:1});
       renderThumbs();
     };
     r.readAsDataURL(f);
   });
 }
 function renderThumbs() {
-  var g = document.getElementById('pg'); g.innerHTML = '';
-  photos.forEach(function(p,i) {
-    var d = document.createElement('div'); d.className = 'thumb';
-    d.innerHTML = '<img src="'+p.src+'" alt="foto"><button class="rm" onclick="removePhoto('+i+')">✕</button>';
+  var g=document.getElementById('pg'); g.innerHTML='';
+  photos.forEach(function(p,i){
+    var d=document.createElement('div'); d.className='thumb';
+    d.innerHTML='<img src="'+p.src+'"><button class="rm" onclick="removePhoto('+i+')">✕</button>';
     g.appendChild(d);
   });
-  var n = photos.length;
-  document.getElementById('pinfo').style.display = n ? 'flex' : 'none';
-  document.getElementById('pcount').textContent = n + " foto" + (n!==1?"'s":'') + " geselecteerd";
-  document.getElementById('btn2next').disabled = n === 0;
+  var n=photos.length;
+  document.getElementById('pinfo').style.display=n?'flex':'none';
+  document.getElementById('pcount').textContent=n+" foto"+(n!==1?"'s":'')+" geselecteerd";
+  document.getElementById('btn2').disabled=n===0;
 }
-function removePhoto(i) { photos.splice(i,1); cropSettings.splice(i,1); renderThumbs(); }
-function onDragOver(e) { e.preventDefault(); document.getElementById('dz').classList.add('drag'); }
-function onDragLeave() { document.getElementById('dz').classList.remove('drag'); }
-function onDrop(e) { e.preventDefault(); onDragLeave(); addFiles(e.dataTransfer.files); }
+function removePhoto(i){photos.splice(i,1);cropState.splice(i,1);renderThumbs();}
+function onDragOver(e){e.preventDefault();document.getElementById('dz').classList.add('drag');}
+function onDragLeave(){document.getElementById('dz').classList.remove('drag');}
+function onDrop(e){e.preventDefault();onDragLeave();addFiles(e.dataTransfer.files);}
 
-// ── NAVIGATION ───────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────────────────
 function goStep(n) {
-  if (n===2 && !document.getElementById('in-name').value.trim()) { showError('Vul eerst je naam in.'); return; }
-  if (n===2 && !selectedEvent) { showError('Kies een event.'); return; }
-  clearError();
-  [1,2,3,4].forEach(function(i) {
-    document.getElementById('p'+i).classList.toggle('active', i===n);
-    var s = document.getElementById('s'+i);
-    s.classList.remove('active','done');
-    if (i<n) { s.classList.add('done'); s.querySelector('.step-num').textContent = '✓'; }
-    if (i===n) s.classList.add('active');
-    if (i>=n && s.querySelector('.step-num').textContent==='✓') s.querySelector('.step-num').textContent = i;
+  if(n===2&&!document.getElementById('in-name').value.trim()){showErr('Vul je naam in.');return;}
+  if(n===2&&!selectedEvent){showErr('Kies een event.');return;}
+  clearErr();
+  [1,2,3,4].forEach(function(i){
+    document.getElementById('p'+i).classList.toggle('active',i===n);
+    var s=document.getElementById('s'+i); s.classList.remove('active','done');
+    if(i<n){s.classList.add('done');s.querySelector('.step-num').textContent='✓';}
+    if(i===n) s.classList.add('active');
+    if(i>=n&&s.querySelector('.step-num').textContent==='✓') s.querySelector('.step-num').textContent=i;
   });
-  if (n===3) initEditor();
-  if (n===4) startCompile();
+  if(n===3) initEditor();
+  if(n===4) startCompile();
 }
-function showError(msg) { var b=document.getElementById('error-box'); b.textContent=msg; b.style.display='block'; }
-function clearError() { document.getElementById('error-box').style.display='none'; }
+function showErr(m){var b=document.getElementById('err');b.textContent=m;b.style.display='block';}
+function clearErr(){document.getElementById('err').style.display='none';}
 
-// ── LAYOUT & STYLE ───────────────────────────────────────
-function selLayout(el, key) {
-  selectedLayout = key; titlebarPos = { x: 0, y: null, rotation: 0 };
-  document.querySelectorAll('.layout-opt').forEach(function(o){o.classList.remove('sel');});
+// ─────────────────────────────────────────────────────────
+// LAYOUT & STYLE
+// ─────────────────────────────────────────────────────────
+function selLayout(el,key){
+  selectedLayout=key;
+  document.querySelectorAll('.lo').forEach(function(o){o.classList.remove('sel');});
   el.classList.add('sel');
-  if (loadedImages.length > 0) { renderSlide(); updateCropTabs(); }
+  if(imgs.length) render();
 }
-function selTS(el, style) {
-  selectedTitleStyle = style;
-  document.querySelectorAll('.ts-chip').forEach(function(c){c.classList.remove('sel');});
+function selSC(el,style){
+  selectedStyle=style;
+  document.querySelectorAll('.sc').forEach(function(c){c.classList.remove('sel');});
   el.classList.add('sel');
-  renderSlide();
+  render();
 }
 
-// ── SLIDE EDITOR ─────────────────────────────────────────
-var CANVAS_W = 1920, CANVAS_H = 1080;
+// ─────────────────────────────────────────────────────────
+// CANVAS SETUP
+// ─────────────────────────────────────────────────────────
+var CW=1920, CH=1080;
+var canvas, ctx;
+var interaction = null; // {type:'photo'|'tb'|'tb-resize', idx, startX,startY, startOx,startOy, startTBx,startTBy,startTBw,startTBh}
 
 function initEditor() {
-  // Reset titlebar positie
-  titlebarPos = { x: 0, y: null, rotation: 0 };
-  activeCropPhoto = 0;
+  canvas = document.getElementById('C');
+  ctx = canvas.getContext('2d');
+  canvas.width = CW; canvas.height = CH;
 
-  // Laad alle foto's als Image objecten
-  loadedImages = [];
-  var promises = photos.map(function(p) {
-    return new Promise(function(resolve) {
-      var img = new Image();
-      img.onload = function() { resolve(img); };
-      img.src = p.src;
-    });
+  // Sync TB state van inputs
+  TB.w = parseInt(document.getElementById('tb-w').value)||1920;
+  TB.h = parseInt(document.getElementById('tb-h').value)||80;
+  TB.y = CH - TB.h;
+  TB.x = (CW - TB.w) / 2;
+
+  // Laad afbeeldingen
+  imgs = [];
+  var pending = photos.length;
+  if (!pending) { render(); return; }
+  photos.forEach(function(p,i) {
+    var im = new Image();
+    im.onload = function() { imgs[i]=im; pending--; if(!pending){initCropState();render();} };
+    im.src = p.src;
   });
+}
 
-  Promise.all(promises).then(function(imgs) {
-    loadedImages = imgs;
-    setupCanvas();
-    updateCropTabs();
-    renderSlide();
+function initCropState() {
+  // Reset crop offsets gecentreerd
+  photos.forEach(function(_,i) {
+    if (!cropState[i]) cropState[i]={ox:0,oy:0,zoom:1};
   });
 }
 
-function setupCanvas() {
-  var canvas = document.getElementById('slide-canvas');
-  var wrap = document.getElementById('slide-editor-wrap');
-  canvas.width = CANVAS_W;
-  canvas.height = CANVAS_H;
+// ─────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────
+function getLayout() { return selectedLayout==='auto'?autoLayout():selectedLayout; }
+function autoLayout(){var n=photos.length;if(n<=1)return'full';if(n===2)return'duo';if(n===3)return'featured';return'grid4';}
 
-  // Drag voor titelbalk
-  canvas.addEventListener('mousedown', onTitlebarMouseDown);
-  canvas.addEventListener('mousemove', onTitlebarMouseMove);
-  canvas.addEventListener('mouseup', onTitlebarMouseUp);
-  canvas.addEventListener('mouseleave', onTitlebarMouseUp);
-  // Touch
-  canvas.addEventListener('touchstart', function(e) { onTitlebarMouseDown(normTouch(e)); }, {passive:true});
-  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); onTitlebarMouseMove(normTouch(e)); }, {passive:false});
-  canvas.addEventListener('touchend', onTitlebarMouseUp);
+// Bereken foto-cellen voor huidige layout
+function getPhotoCells() {
+  var L=getLayout(), h=CH-TB.h;
+  var cells=[];
+  if(L==='full')      cells=[{x:0,y:0,w:CW,h:CH}];
+  else if(L==='duo')  cells=[{x:0,y:0,w:CW/2-2,h:h},{x:CW/2+2,y:0,w:CW/2-2,h:h}];
+  else if(L==='featured'){var mw=CW*0.62;cells=[{x:0,y:0,w:mw-2,h:h},{x:mw+2,y:0,w:CW-mw-2,h:h/2-2},{x:mw+2,y:h/2+2,w:CW-mw-2,h:h/2-2}];}
+  else if(L==='grid4'){var hw=CW/2,hh=h/2;cells=[{x:0,y:0,w:hw-2,h:hh-2},{x:hw+2,y:0,w:hw-2,h:hh-2},{x:0,y:hh+2,w:hw-2,h:hh-2},{x:hw+2,y:hh+2,w:hw-2,h:hh-2}];}
+  else if(L==='strip'){var tw=CW/3;cells=[{x:0,y:0,w:tw-2,h:h},{x:tw+2,y:0,w:tw-2,h:h},{x:tw*2+4,y:0,w:tw-4,h:h}];}
+  else if(L==='mosaic'){var th=h*0.55,bh=h-th-4;cells=[{x:0,y:0,w:CW,h:th},{x:0,y:th+4,w:CW/2-2,h:bh},{x:CW/2+2,y:th+4,w:CW/2-2,h:bh}];}
+  else if(L==='cinematic') cells=[{x:0,y:0,w:CW,h:CH}];
+  return cells;
 }
 
-function normTouch(e) {
-  var t = e.touches[0];
-  return { clientX: t.clientX, clientY: t.clientY };
-}
-
-function getCanvasCoords(e) {
-  var canvas = document.getElementById('slide-canvas');
-  var rect = canvas.getBoundingClientRect();
-  var scaleX = CANVAS_W / rect.width;
-  var scaleY = CANVAS_H / rect.height;
-  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
-}
-
-function getTitlebarRect() {
-  var barH = parseInt(document.getElementById('tb-height').value);
-  var y = titlebarPos.y !== null ? titlebarPos.y : CANVAS_H - barH;
-  return { x: titlebarPos.x, y: y, w: CANVAS_W, h: barH };
-}
-
-function isInTitlebar(px, py) {
-  var r = getTitlebarRect();
-  return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
-}
-
-function onTitlebarMouseDown(e) {
-  var pos = getCanvasCoords(e);
-  if (isInTitlebar(pos.x, pos.y)) {
-    titlebarDragging = true;
-    var r = getTitlebarRect();
-    titlebarDragStart = { mx: pos.x, my: pos.y, tx: r.x, ty: r.y };
+function drawPhoto(img, crop, cell) {
+  var x=cell.x,y=cell.y,w=cell.w,h=cell.h;
+  if(!img){
+    ctx.fillStyle='#1a1a3a'; ctx.fillRect(x,y,w,h);
+    ctx.fillStyle='#333366'; ctx.font='60px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('📷',x+w/2,y+h/2);
+    return;
   }
-}
-
-function onTitlebarMouseMove(e) {
-  if (!titlebarDragging) return;
-  var pos = getCanvasCoords(e);
-  var dx = pos.x - titlebarDragStart.mx;
-  var dy = pos.y - titlebarDragStart.my;
-  titlebarPos.x = titlebarDragStart.tx + dx;
-  titlebarPos.y = titlebarDragStart.ty + dy;
-  renderSlide();
-}
-
-function onTitlebarMouseUp() { titlebarDragging = false; }
-
-// ── CROP TABS ────────────────────────────────────────────
-function updateCropTabs() {
-  var slots = getPhotoSlots();
-  var tabs = document.getElementById('crop-tabs');
-  tabs.innerHTML = '';
-  for (var i = 0; i < Math.min(slots, photos.length); i++) {
-    var tab = document.createElement('div');
-    tab.className = 'crop-tab' + (i===activeCropPhoto?' active':'');
-    tab.textContent = 'Foto ' + (i+1);
-    tab.dataset.idx = i;
-    tab.onclick = (function(idx) {
-      return function() { activeCropPhoto = idx; updateCropTabs(); loadCropSliders(); };
-    })(i);
-    tabs.appendChild(tab);
-  }
-  loadCropSliders();
-}
-
-function loadCropSliders() {
-  var c = cropSettings[activeCropPhoto] || { x: 0.5, y: 0.5, zoom: 1 };
-  document.getElementById('crop-x').value = Math.round(c.x * 100);
-  document.getElementById('crop-y').value = Math.round(c.y * 100);
-  document.getElementById('crop-zoom').value = Math.round(c.zoom * 100);
-}
-
-function onCropChange() {
-  if (!cropSettings[activeCropPhoto]) cropSettings[activeCropPhoto] = { x: 0.5, y: 0.5, zoom: 1 };
-  cropSettings[activeCropPhoto].x = parseInt(document.getElementById('crop-x').value) / 100;
-  cropSettings[activeCropPhoto].y = parseInt(document.getElementById('crop-y').value) / 100;
-  cropSettings[activeCropPhoto].zoom = parseInt(document.getElementById('crop-zoom').value) / 100;
-  renderSlide();
-}
-
-function getPhotoSlots() {
-  var layout = selectedLayout === 'auto' ? bestAutoLayout() : selectedLayout;
-  var slots = { full:1, duo:2, featured:3, grid4:4, strip:3, mosaic:3, cinematic:1 };
-  return slots[layout] || 1;
-}
-
-function bestAutoLayout() {
-  var n = photos.length;
-  if (n<=1) return 'full'; if (n===2) return 'duo'; if (n===3) return 'featured'; return 'grid4';
-}
-
-// ── CANVAS RENDER ────────────────────────────────────────
-function renderSlide() {
-  var canvas = document.getElementById('slide-canvas');
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-
-  // Achtergrond
-  ctx.fillStyle = '#0A0A14';
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-
-  var layout = selectedLayout === 'auto' ? bestAutoLayout() : selectedLayout;
-  var barH = parseInt(document.getElementById('tb-height').value);
-  var imgH = CANVAS_H - (layout === 'full' || layout === 'cinematic' ? 0 : barH);
-
-  // Teken foto's
-  var p = function(i) { return loadedImages[i] || null; };
-  var c = function(i) { return cropSettings[i] || { x:0.5, y:0.5, zoom:1 }; };
-
-  function drawPhoto(img, crop, x, y, w, h) {
-    if (!img) {
-      ctx.fillStyle = '#1a1a3a';
-      ctx.fillRect(x, y, w, h);
-      ctx.fillStyle = '#333366';
-      ctx.font = '40px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('📷', x + w/2, y + h/2);
-      return;
-    }
-    var zoom = crop.zoom || 1;
-    var scale = Math.max(w / img.width, h / img.height) * zoom;
-    var sw = img.width * scale, sh = img.height * scale;
-    var sx = (sw - w) * crop.x;
-    var sy = (sh - h) * crop.y;
-    ctx.save();
-    ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
-    ctx.drawImage(img, x - sx, y - sy, sw, sh);
-    ctx.restore();
-  }
-
-  if (layout === 'full') {
-    drawPhoto(p(0), c(0), 0, 0, CANVAS_W, CANVAS_H);
-  } else if (layout === 'duo') {
-    var hw = CANVAS_W/2;
-    drawPhoto(p(0), c(0), 0, 0, hw-2, imgH);
-    drawPhoto(p(1), c(1), hw+2, 0, hw-2, imgH);
-  } else if (layout === 'featured') {
-    var mw = CANVAS_W * 0.62;
-    drawPhoto(p(0), c(0), 0, 0, mw-2, imgH);
-    drawPhoto(p(1), c(1), mw+2, 0, CANVAS_W-mw-2, imgH/2-2);
-    drawPhoto(p(2), c(2), mw+2, imgH/2+2, CANVAS_W-mw-2, imgH/2-2);
-  } else if (layout === 'grid4') {
-    var hw2 = CANVAS_W/2, hh = imgH/2;
-    drawPhoto(p(0), c(0), 0, 0, hw2-2, hh-2);
-    drawPhoto(p(1), c(1), hw2+2, 0, hw2-2, hh-2);
-    drawPhoto(p(2), c(2), 0, hh+2, hw2-2, hh-2);
-    drawPhoto(p(3), c(3), hw2+2, hh+2, hw2-2, hh-2);
-  } else if (layout === 'strip') {
-    var tw = CANVAS_W/3;
-    for (var i=0; i<3; i++) drawPhoto(p(i), c(i), tw*i+(i>0?2:0), 0, tw-2, imgH);
-  } else if (layout === 'mosaic') {
-    var topH = imgH*0.55, botH = imgH-topH-4;
-    drawPhoto(p(0), c(0), 0, 0, CANVAS_W, topH);
-    drawPhoto(p(1), c(1), 0, topH+4, CANVAS_W/2-2, botH);
-    drawPhoto(p(2), c(2), CANVAS_W/2+2, topH+4, CANVAS_W/2-2, botH);
-  } else if (layout === 'cinematic') {
-    drawPhoto(p(0), c(0), 0, 0, CANVAS_W, CANVAS_H-50);
-  }
-
-  // Titelbalk
-  var tbH = parseInt(document.getElementById('tb-height').value);
-  var tbOpacity = parseInt(document.getElementById('tb-opacity').value) / 100;
-  var tbFontSize = parseInt(document.getElementById('tb-fontsize').value);
-  var tbRotation = parseInt(document.getElementById('tb-rotate').value) * Math.PI / 180;
-  var tbY = titlebarPos.y !== null ? titlebarPos.y : CANVAS_H - tbH;
-  var tbX = titlebarPos.x || 0;
-
-  // Update display values
-  document.getElementById('tb-height-val').textContent = tbH + 'px';
-  document.getElementById('tb-opacity-val').textContent = parseInt(document.getElementById('tb-opacity').value) + '%';
-  document.getElementById('tb-fontsize-val').textContent = tbFontSize + 'px';
-  document.getElementById('tb-rotate-val').textContent = parseInt(document.getElementById('tb-rotate').value) + '°';
-
+  var zoom=crop.zoom||1;
+  var scale=Math.max(w/img.width,h/img.height)*zoom;
+  var sw=img.width*scale, sh=img.height*scale;
+  // ox,oy zijn offset in canvas-pixels (hoe ver de afbeelding is verschoven)
+  var ox=crop.ox||0, oy=crop.oy||0;
+  // Begrens zodat afbeelding de cel altijd vult
+  var minX=w-sw, maxX=0, minY=h-sh, maxY=0;
+  ox=Math.max(minX,Math.min(maxX,ox));
+  oy=Math.max(minY,Math.min(maxY,oy));
+  crop.ox=ox; crop.oy=oy;
   ctx.save();
-  ctx.translate(tbX + CANVAS_W/2, tbY + tbH/2);
-  ctx.rotate(tbRotation);
-  ctx.fillStyle = 'rgba(5,5,20,' + tbOpacity + ')';
-  ctx.fillRect(-CANVAS_W/2, -tbH/2, CANVAS_W, tbH);
-
-  // Tekst
-  var styles = {
-    elegant: { color:'#FFFFFF', italic:true,  bold:false },
-    bold:    { color:'#FFFFFF', italic:false, bold:true  },
-    minimal: { color:'#DDDDEE', italic:false, bold:false },
-    playful: { color:'#FBB024', italic:false, bold:true  },
-  };
-  var st = styles[selectedTitleStyle] || styles.elegant;
-  ctx.font = (st.bold?'bold ':'') + (st.italic?'italic ':'') + tbFontSize + 'px -apple-system, sans-serif';
-  ctx.fillStyle = st.color;
-  ctx.textBaseline = 'middle';
-  ctx.textAlign = 'left';
-  var caption = document.getElementById('in-caption') ? document.getElementById('in-caption').value : '';
-  var titleText = caption ? selectedEvent + '  —  ' + caption : selectedEvent;
-  ctx.fillText(titleText, -CANVAS_W/2 + 30, 0);
-
-  // Naam rechts
-  ctx.textAlign = 'right';
-  ctx.font = 'italic ' + Math.round(tbFontSize*0.6) + 'px -apple-system, sans-serif';
-  ctx.fillStyle = 'rgba(180,180,220,0.8)';
-  var name = document.getElementById('in-name') ? document.getElementById('in-name').value : '';
-  ctx.fillText(name, CANVAS_W/2 - 30, 0);
-
-  // Drag-handvat indicator
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  ctx.setLineDash([8,8]);
-  ctx.strokeRect(-CANVAS_W/2+2, -tbH/2+2, CANVAS_W-4, tbH-4);
-  ctx.setLineDash([]);
-
+  ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.drawImage(img,x+ox,y+oy,sw,sh);
   ctx.restore();
 }
 
-// ── COMPILE & SEND ───────────────────────────────────────
-var STEPS = [
-  {label:"Foto's verwerken", icon:'🖼️'},
-  {label:'Compilatie samenstellen', icon:'🎨'},
-  {label:'Slide uploaden naar Google Slides', icon:'📤'},
-  {label:'Presentatie bijwerken', icon:'📺'},
+function render() {
+  if(!canvas) return;
+  // Sync TB state van inputs
+  var tw=parseInt(document.getElementById('tb-w').value)||CW;
+  var th=parseInt(document.getElementById('tb-h').value)||80;
+  var top=parseInt(document.getElementById('tb-op').value)||88;
+  var trot=parseFloat(document.getElementById('tb-rot').value)||0;
+  TB.w=Math.min(tw,CW); TB.h=th;
+  TB.opacity=top/100;
+  TB.rot=trot*Math.PI/180;
+  TB.color=document.getElementById('tb-color').value;
+  TB.textColor=document.getElementById('tb-textcolor').value;
+  if(TB.y===null) TB.y=CH-TB.h;
+  if(TB.x===null) TB.x=(CW-TB.w)/2;
+
+  ctx.clearRect(0,0,CW,CH);
+  ctx.fillStyle='#0A0A14'; ctx.fillRect(0,0,CW,CH);
+
+  var cells=getPhotoCells();
+  cells.forEach(function(cell,i){drawPhoto(imgs[i]||null,cropState[i]||{ox:0,oy:0,zoom:1},cell);});
+
+  // Titelbalk
+  ctx.save();
+  var cx=TB.x+TB.w/2, cy=TB.y+TB.h/2;
+  ctx.translate(cx,cy); ctx.rotate(TB.rot);
+  ctx.fillStyle=hexToRgba(TB.color,TB.opacity);
+  ctx.fillRect(-TB.w/2,-TB.h/2,TB.w,TB.h);
+
+  // Auto-fit tekst
+  var caption=document.getElementById('in-caption')?document.getElementById('in-caption').value:'';
+  var name=document.getElementById('in-name')?document.getElementById('in-name').value:'';
+  var titleText=caption?selectedEvent+' — '+caption:selectedEvent;
+  var maxW=TB.w-200;
+  var fs=TB.h*0.45;
+  var styles={elegant:{italic:true,bold:false},bold:{italic:false,bold:true},minimal:{italic:false,bold:false},playful:{italic:false,bold:true}};
+  var st=styles[selectedStyle]||styles.elegant;
+  // Auto-fit
+  do {
+    ctx.font=(st.bold?'bold ':' ')+(st.italic?'italic ':' ')+fs+'px -apple-system,sans-serif';
+    fs-=1;
+  } while(ctx.measureText(titleText).width>maxW && fs>10);
+
+  ctx.fillStyle=TB.textColor;
+  ctx.textBaseline='middle'; ctx.textAlign='left';
+  ctx.fillText(titleText,-TB.w/2+30,0);
+
+  // Naam rechts
+  ctx.textAlign='right';
+  ctx.font='italic '+(fs*0.65)+'px -apple-system,sans-serif';
+  ctx.fillStyle=TB.textColor+'99';
+  ctx.fillText(name,TB.w/2-30,0);
+
+  // Resize handvatten (visueel)
+  ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+  ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
+  // Hoekhandvatten
+  [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){
+    ctx.fillStyle='rgba(255,255,255,0.8)';
+    ctx.fillRect(c[0]*(TB.w/2)-6,c[1]*(TB.h/2)-6,12,12);
+  });
+  ctx.restore();
+}
+
+function hexToRgba(hex,a){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+// ─────────────────────────────────────────────────────────
+// INTERACTIE: klik/sleep op canvas
+// ─────────────────────────────────────────────────────────
+function canvasXY(e) {
+  var rect=canvas.getBoundingClientRect();
+  var sx=CW/rect.width, sy=CH/rect.height;
+  var cx=e.clientX||e.touches&&e.touches[0].clientX;
+  var cy=e.clientY||e.touches&&e.touches[0].clientY;
+  return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy};
+}
+
+function getTBRect() {
+  // Niet-geroteerd bounding box voor hit-test (vereenvoudigd)
+  return {x:TB.x, y:TB.y, w:TB.w, h:TB.h};
+}
+
+function getResizeHandle(px,py) {
+  // Check hoeken (10px marge)
+  var R=getTBRect(), m=20;
+  var corners=[
+    {name:'nw',x:R.x,y:R.y},{name:'ne',x:R.x+R.w,y:R.y},
+    {name:'se',x:R.x+R.w,y:R.y+R.h},{name:'sw',x:R.x,y:R.y+R.h}
+  ];
+  for(var i=0;i<corners.length;i++){
+    if(Math.abs(px-corners[i].x)<m && Math.abs(py-corners[i].y)<m) return corners[i].name;
+  }
+  return null;
+}
+
+function hitTestTB(px,py){
+  var R=getTBRect();
+  return px>=R.x&&px<=R.x+R.w&&py>=R.y&&py<=R.y+R.h;
+}
+
+function hitTestPhoto(px,py){
+  var cells=getPhotoCells();
+  for(var i=0;i<cells.length;i++){
+    var c=cells[i];
+    if(px>=c.x&&px<=c.x+c.w&&py>=c.y&&py<=c.y+c.h) return i;
+  }
+  return -1;
+}
+
+function onMouseDown(e) {
+  if(e.button===2) return;
+  var pos=canvasXY(e);
+  var handle=getResizeHandle(pos.x,pos.y);
+  if(handle){
+    interaction={type:'tb-resize',handle:handle,startX:pos.x,startY:pos.y,startTBx:TB.x,startTBy:TB.y,startTBw:TB.w,startTBh:TB.h};
+    return;
+  }
+  if(hitTestTB(pos.x,pos.y)){
+    interaction={type:'tb',startX:pos.x,startY:pos.y,startTBx:TB.x,startTBy:TB.y};
+    return;
+  }
+  var idx=hitTestPhoto(pos.x,pos.y);
+  if(idx>=0){
+    interaction={type:'photo',idx:idx,startX:pos.x,startY:pos.y,startOx:cropState[idx].ox||0,startOy:cropState[idx].oy||0};
+    return;
+  }
+}
+
+function onMouseMove(e) {
+  if(!interaction) return;
+  var pos=canvasXY(e);
+  var dx=pos.x-interaction.startX, dy=pos.y-interaction.startY;
+
+  if(interaction.type==='photo'){
+    cropState[interaction.idx].ox=interaction.startOx+dx;
+    cropState[interaction.idx].oy=interaction.startOy+dy;
+    render();
+  } else if(interaction.type==='tb'){
+    TB.x=interaction.startTBx+dx;
+    TB.y=interaction.startTBy+dy;
+    render();
+  } else if(interaction.type==='tb-resize'){
+    var h=interaction.handle;
+    var nx=interaction.startTBx, ny=interaction.startTBy, nw=interaction.startTBw, nh=interaction.startTBh;
+    if(h==='se'){nw=Math.max(200,nw+dx);nh=Math.max(30,nh+dy);}
+    else if(h==='sw'){nx=interaction.startTBx+dx;nw=Math.max(200,nw-dx);nh=Math.max(30,nh+dy);}
+    else if(h==='ne'){nw=Math.max(200,nw+dx);ny=interaction.startTBy+dy;nh=Math.max(30,nh-dy);}
+    else if(h==='nw'){nx=interaction.startTBx+dx;ny=interaction.startTBy+dy;nw=Math.max(200,nw-dx);nh=Math.max(30,nh-dy);}
+    TB.x=nx;TB.y=ny;TB.w=nw;TB.h=nh;
+    // Sync inputs
+    document.getElementById('tb-w').value=Math.round(nw);
+    document.getElementById('tb-h').value=Math.round(nh);
+    render();
+  }
+
+  // Cursor aanpassen
+  var cur='default';
+  var hh=getResizeHandle(pos.x,pos.y);
+  if(hh) cur=hh==='nw'||hh==='se'?'nwse-resize':'nesw-resize';
+  else if(hitTestTB(pos.x,pos.y)) cur='move';
+  else if(hitTestPhoto(pos.x,pos.y)>=0) cur='grab';
+  canvas.style.cursor=cur;
+}
+
+function onMouseUp() { interaction=null; }
+
+function onWheel(e) {
+  if(!e.ctrlKey) return;
+  e.preventDefault();
+  var pos=canvasXY(e);
+  var idx=hitTestPhoto(pos.x,pos.y);
+  if(idx<0) return;
+  var delta=e.deltaY>0?-0.05:0.05;
+  cropState[idx].zoom=Math.max(0.5,Math.min(5,( cropState[idx].zoom||1)+delta));
+  render();
+}
+
+// Event listeners (na canvas init)
+document.addEventListener('DOMContentLoaded',function(){
+  var c=document.getElementById('C');
+  c.addEventListener('mousedown',onMouseDown);
+  c.addEventListener('mousemove',onMouseMove);
+  c.addEventListener('mouseup',onMouseUp);
+  c.addEventListener('mouseleave',onMouseUp);
+  c.addEventListener('wheel',onWheel,{passive:false});
+  // Touch
+  c.addEventListener('touchstart',function(e){onMouseDown({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY,button:0});},{passive:true});
+  c.addEventListener('touchmove',function(e){e.preventDefault();onMouseMove({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY});},{passive:false});
+  c.addEventListener('touchend',onMouseUp);
+});
+
+// ─────────────────────────────────────────────────────────
+// COMPILE & SEND
+// ─────────────────────────────────────────────────────────
+var STEPS=[
+  {label:"Foto's verwerken",icon:'🖼️'},
+  {label:'Canvas compileren',icon:'🎨'},
+  {label:'Uploaden naar Google Slides',icon:'📤'},
+  {label:'Presentatie bijwerken',icon:'📺'},
 ];
 
-function startCompile() {
-  document.getElementById('compiling-card').style.display='block';
-  document.getElementById('success-card').style.display='none';
-  document.getElementById('recent-card').style.display='none';
-  var list = document.getElementById('prog-list'); list.innerHTML='';
-  STEPS.forEach(function(s,i) {
-    list.innerHTML += '<div class="prog-item" id="pi'+i+'"><div class="prog-icon" id="pic'+i+'">'+s.icon+'</div><span style="flex:1">'+s.label+'</span><div class="prog-bar-wrap"><div class="prog-bar" id="pb'+i+'"></div></div></div>';
-  });
+function startCompile(){
+  document.getElementById('comp-card').style.display='block';
+  document.getElementById('ok-card').style.display='none';
+  document.getElementById('rec-card').style.display='none';
+  var list=document.getElementById('prog-list'); list.innerHTML='';
+  STEPS.forEach(function(s,i){list.innerHTML+='<div class="prog-item" id="pi'+i+'"><div class="prog-icon" id="pic'+i+'">'+s.icon+'</div><span style="flex:1">'+s.label+'</span><div class="prog-bar-wrap"><div class="prog-bar" id="pb'+i+'"></div></div></div>';});
   var i=0;
-  function next() {
-    if (i>=STEPS.length) { sendSlide(); return; }
+  function next(){
+    if(i>=STEPS.length){sendSlide();return;}
     document.getElementById('pi'+i).classList.add('active');
     document.getElementById('pb'+i).style.width='100%';
-    setTimeout(function() {
+    setTimeout(function(){
       document.getElementById('pi'+i).classList.remove('active');
       document.getElementById('pi'+i).classList.add('done');
       document.getElementById('pic'+i).textContent='✓';
       i++; next();
-    }, 600+Math.random()*300);
+    },500+Math.random()*300);
   }
   next();
 }
 
-function sendSlide() {
-  // Render canvas naar JPEG en stuur op
-  var canvas = document.getElementById('slide-canvas');
-  var compiledImage = canvas.toDataURL('image/jpeg', 0.92);
-  var payload = {
-    memberName: document.getElementById('in-name').value,
-    eventName: selectedEvent,
-    caption: document.getElementById('in-caption').value,
-    layout: selectedLayout,
-    titleStyle: selectedTitleStyle,
-    photos: [compiledImage],
-    presentationId: CONFIG.PRESENTATION_ID
-  };
-  fetch(CONFIG.APPS_SCRIPT_URL, {
-    method: 'POST', mode: 'no-cors',
-    headers: {'Content-Type': 'text/plain'},
-    body: JSON.stringify(payload)
-  }).then(function() { showSuccess(); })
-    .catch(function(e) { showError('Fout: ' + e.message); });
+function sendSlide(){
+  // Render canvas naar JPEG
+  var c=document.getElementById('C');
+  var img=c?c.toDataURL('image/jpeg',0.92):null;
+  if(!img){showErr('Canvas niet beschikbaar.');return;}
+  fetch(CFG.APPS_SCRIPT_URL,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({
+      memberName:document.getElementById('in-name').value,
+      eventName:selectedEvent,
+      caption:document.getElementById('in-caption').value,
+      layout:selectedLayout,
+      titleStyle:selectedStyle,
+      photos:[img],
+      presentationId:CFG.PRESENTATION_ID
+    })
+  }).then(function(){showSuccess();}).catch(function(e){showErr('Fout: '+e.message);});
 }
 
-function showSuccess() {
-  document.getElementById('compiling-card').style.display='none';
-  document.getElementById('success-card').style.display='block';
-  document.getElementById('recent-card').style.display='block';
-  var name = document.getElementById('in-name').value||'Lid';
-  var layoutNames={full:'Fullscreen',duo:'Duo',featured:'Featured',grid4:'Grid',strip:'Strip',mosaic:'Mozaïek',cinematic:'Cinematic',auto:'Auto'};
+function showSuccess(){
+  document.getElementById('comp-card').style.display='none';
+  document.getElementById('ok-card').style.display='block';
+  document.getElementById('rec-card').style.display='block';
+  var name=document.getElementById('in-name').value||'Lid';
+  var lNames={full:'Fullscreen',duo:'Duo',featured:'Featured',grid4:'Grid',strip:'Strip',mosaic:'Mozaïek',cinematic:'Cinematic',auto:'Auto'};
   document.getElementById('sm-name').textContent=name;
   document.getElementById('sm-event').textContent=selectedEvent;
   document.getElementById('sm-photos').textContent=photos.length+" foto's";
-  document.getElementById('sm-layout').textContent=layoutNames[selectedLayout]||selectedLayout;
-  document.getElementById('btn-open-slides').onclick=function(){window.open('https://docs.google.com/presentation/d/'+CONFIG.PRESENTATION_ID+'/edit','_blank');};
-  var initials=name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
+  document.getElementById('sm-layout').textContent=lNames[selectedLayout]||selectedLayout;
+  document.getElementById('btn-open').onclick=function(){window.open('https://docs.google.com/presentation/d/'+CFG.PRESENTATION_ID+'/edit','_blank');};
+  var init=name.split(' ').map(function(w){return w[0]||'';}).join('').toUpperCase().slice(0,2);
   var row=document.createElement('div'); row.className='recent-row';
-  row.innerHTML='<div class="av">'+initials+'</div><span style="flex:1">'+name+'</span><span style="font-size:11px;color:var(--muted)">'+selectedEvent+'</span><span style="margin-left:8px;font-size:11px;font-weight:700;color:var(--green-dark);background:var(--green-light);padding:2px 8px;border-radius:20px">'+photos.length+" foto's"+'</span>';
-  document.getElementById('recent-list').insertBefore(row, document.getElementById('recent-list').firstChild);
+  row.innerHTML='<div class="av">'+init+'</div><span style="flex:1">'+name+'</span><span style="font-size:11px;color:var(--m)">'+selectedEvent+'</span><span style="margin-left:8px;font-size:11px;font-weight:700;color:var(--gd);background:var(--gl);padding:2px 8px;border-radius:20px">'+photos.length+" foto's"+'</span>';
+  document.getElementById('rec-list').insertBefore(row,document.getElementById('rec-list').firstChild);
 }
 
-function resetApp() {
-  photos=[]; cropSettings=[]; loadedImages=[]; selectedLayout='full'; selectedTitleStyle='elegant';
-  titlebarPos={x:0,y:null,rotation:0};
+function resetApp(){
+  photos=[];imgs=[];cropState=[];selectedLayout='full';selectedStyle='elegant';
+  TB={x:0,y:null,w:1920,h:80,rot:0,opacity:0.88,color:'#050514',textColor:'#ffffff'};
   document.getElementById('in-name').value='';
   document.getElementById('in-caption').value='';
   document.getElementById('pg').innerHTML='';
   document.getElementById('pinfo').style.display='none';
-  document.getElementById('btn2next').disabled=true;
-  document.querySelectorAll('.layout-opt').forEach(function(o,i){o.classList.toggle('sel',i===0);});
-  document.querySelectorAll('.ts-chip').forEach(function(c,i){c.classList.toggle('sel',i===0);});
-  selectedTitleStyle='elegant'; selectedLayout='full';
+  document.getElementById('btn2').disabled=true;
+  document.querySelectorAll('.lo').forEach(function(o,i){o.classList.toggle('sel',i===0);});
+  document.querySelectorAll('.sc').forEach(function(c,i){c.classList.toggle('sel',i===0);});
   goStep(1);
 }
 </script>
