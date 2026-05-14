@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.2</title>
+<title>VEP Foto Upload v2.3</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -107,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.2</span>
+    <span class="badge badge-b">v2.3</span>
   </div>
 
   <div class="steps">
@@ -538,36 +538,68 @@ function render() {
   ctx.fillStyle=hexToRgba(TB.color,TB.opacity);
   ctx.fillRect(-TB.w/2,-TB.h/2,TB.w,TB.h);
 
-  // Auto-fit tekst
   var caption=document.getElementById('in-caption')?document.getElementById('in-caption').value:'';
-  var name=document.getElementById('in-name')?document.getElementById('in-name').value:'';
+  var memberName=document.getElementById('in-name')?document.getElementById('in-name').value:'';
   var titleText=caption?selectedEvent+' — '+caption:selectedEvent;
-  var maxW=TB.w-200;
-  var fs=TB.h*0.45;
   var styles={elegant:{italic:true,bold:false},bold:{italic:false,bold:true},minimal:{italic:false,bold:false},playful:{italic:false,bold:true}};
   var st=styles[selectedStyle]||styles.elegant;
-  // Auto-fit
+
+  // Kleine marges (was 30/200, nu 12/80)
+  var marginX=12;
+  var nameW=memberName?Math.min(TB.w*0.2,240):0;
+  var maxTextW=TB.w-nameW-marginX*3;
+
+  // Wrap tekst in meerdere regels als nodig
+  function wrapText(text, maxW, font) {
+    ctx.font=font;
+    var words=text.split(' ');
+    var lines=[], line='';
+    words.forEach(function(w){
+      var test=line?line+' '+w:w;
+      if(ctx.measureText(test).width>maxW && line){lines.push(line);line=w;}
+      else line=test;
+    });
+    if(line) lines.push(line);
+    return lines;
+  }
+
+  // Auto-fit lettergrootte op basis van hoogte en breedte
+  var fs=Math.min(TB.h*0.55, 72);
+  var lines, font;
   do {
-    ctx.font=(st.bold?'bold ':' ')+(st.italic?'italic ':' ')+fs+'px -apple-system,sans-serif';
+    font=(st.bold?'bold ':'')+( st.italic?'italic ':'')+fs+'px -apple-system,sans-serif';
+    lines=wrapText(titleText, maxTextW, font);
+    var totalH=lines.length*fs*1.2;
+    if(totalH<=TB.h-8 && ctx.measureText(lines[0]||'').width<=maxTextW) break;
     fs-=1;
-  } while(ctx.measureText(titleText).width>maxW && fs>10);
+  } while(fs>8);
 
   ctx.fillStyle=TB.textColor;
-  ctx.textBaseline='middle'; ctx.textAlign='left';
-  ctx.fillText(titleText,-TB.w/2+30,0);
+  ctx.font=font;
+  ctx.textBaseline='middle';
+  ctx.textAlign='left';
 
-  // Naam rechts
-  ctx.textAlign='right';
-  ctx.font='italic '+(fs*0.65)+'px -apple-system,sans-serif';
-  ctx.fillStyle=TB.textColor+'99';
-  ctx.fillText(name,TB.w/2-30,0);
+  // Verticaal centreren van meerdere regels
+  var lineH=fs*1.2;
+  var totalH=lines.length*lineH;
+  var startY=-totalH/2+lineH/2;
+  lines.forEach(function(line,i){
+    ctx.fillText(line,-TB.w/2+marginX,startY+i*lineH);
+  });
 
-  // Resize handvatten (visueel)
-  ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+  // Naam rechts verticaal gecentreerd
+  if(memberName){
+    ctx.textAlign='right';
+    ctx.font='italic '+(fs*0.6)+'px -apple-system,sans-serif';
+    ctx.fillStyle=TB.textColor+'AA';
+    ctx.fillText(memberName,TB.w/2-marginX,0);
+  }
+
+  // Resize handvatten
+  ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
   ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
-  // Hoekhandvatten
   [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){
-    ctx.fillStyle='rgba(255,255,255,0.8)';
+    ctx.fillStyle='rgba(255,255,255,0.75)';
     ctx.fillRect(c[0]*(TB.w/2)-6,c[1]*(TB.h/2)-6,12,12);
   });
   ctx.restore();
