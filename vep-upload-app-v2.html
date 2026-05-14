@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.1</title>
+<title>VEP Foto Upload v2.2</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -96,6 +96,9 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
 .panel{display:none}
 .panel.active{display:block}
 .err{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:.875rem;display:none}
+.swatch{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.swatch:hover{transform:scale(1.1)}
+.swatch.sel{border-color:#333;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
 </style>
 </head>
 <body>
@@ -104,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.1</span>
+    <span class="badge badge-b">v2.2</span>
   </div>
 
   <div class="steps">
@@ -193,11 +196,30 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
           <div class="tb-field"><label>Transparantie %</label><input type="number" id="tb-op" value="88" min="0" max="100" oninput="render()"></div>
           <div class="tb-field"><label>Rotatie °</label><input type="number" id="tb-rot" value="0" min="-180" max="180" oninput="render()"></div>
         </div>
-        <div class="color-row">
-          <label>Achtergrondkleur</label>
-          <input type="color" id="tb-color" value="#050514" oninput="render()">
-          <label style="margin-left:12px">Tekstkleur</label>
-          <input type="color" id="tb-textcolor" value="#ffffff" oninput="render()">
+        <div style="margin-top:.5rem">
+          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Achtergrondkleur <span style="font-size:10px;color:#999">(VEP kleuren)</span></label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center" id="bg-swatches">
+            <div class="swatch sel" data-color="#050514" onclick="setBgColor(this)" style="background:#050514" title="Zwart"></div>
+            <div class="swatch" data-color="#226FB7" onclick="setBgColor(this)" style="background:#226FB7" title="VEP Blauw"></div>
+            <div class="swatch" data-color="#4485C6" onclick="setBgColor(this)" style="background:#4485C6" title="Lichtblauw"></div>
+            <div class="swatch" data-color="#EBD61F" onclick="setBgColor(this)" style="background:#EBD61F" title="VEP Geel"></div>
+            <div class="swatch" data-color="#C1CD2E" onclick="setBgColor(this)" style="background:#C1CD2E" title="VEP Groen"></div>
+            <div class="swatch" data-color="#676A33" onclick="setBgColor(this)" style="background:#676A33" title="Donkergroen"></div>
+            <div class="swatch" data-color="#FFFFFF" onclick="setBgColor(this)" style="background:#FFFFFF;border:1px solid #ddd" title="Wit"></div>
+            <input type="color" id="tb-color" value="#050514" oninput="setBgColorCustom(this.value)" title="Aangepaste kleur" style="width:32px;height:32px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer">
+          </div>
+        </div>
+        <div style="margin-top:.75rem">
+          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Tekstkleur <span style="font-size:10px;color:#999">(VEP kleuren)</span></label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center" id="text-swatches">
+            <div class="swatch sel" data-color="#FFFFFF" onclick="setTextColor(this)" style="background:#FFFFFF;border:1px solid #ddd" title="Wit"></div>
+            <div class="swatch" data-color="#EBD61F" onclick="setTextColor(this)" style="background:#EBD61F" title="VEP Geel"></div>
+            <div class="swatch" data-color="#226FB7" onclick="setTextColor(this)" style="background:#226FB7" title="VEP Blauw"></div>
+            <div class="swatch" data-color="#C1CD2E" onclick="setTextColor(this)" style="background:#C1CD2E" title="VEP Groen"></div>
+            <div class="swatch" data-color="#050514" onclick="setTextColor(this)" style="background:#050514" title="Zwart"></div>
+            <div class="swatch" data-color="#F6E521" onclick="setTextColor(this)" style="background:#F6E521" title="Helder geel"></div>
+            <input type="color" id="tb-textcolor" value="#ffffff" oninput="setTextColorCustom(this.value)" title="Aangepaste kleur" style="width:32px;height:32px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer">
+          </div>
         </div>
         <div style="margin-top:.75rem">
           <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Stijl</label>
@@ -450,7 +472,8 @@ function autoLayout(){var n=photos.length;if(n<=1)return'full';if(n===2)return'd
 
 // Bereken foto-cellen voor huidige layout
 function getPhotoCells() {
-  var L=getLayout(), h=CH-TB.h;
+  // Foto's vullen altijd de VOLLEDIGE slide - titelbalk is een overlay bovenop
+  var L=getLayout(), h=CH;
   var cells=[];
   if(L==='full')      cells=[{x:0,y:0,w:CW,h:CH}];
   else if(L==='duo')  cells=[{x:0,y:0,w:CW/2-2,h:h},{x:CW/2+2,y:0,w:CW/2-2,h:h}];
@@ -746,6 +769,29 @@ function showSuccess(){
   var row=document.createElement('div'); row.className='recent-row';
   row.innerHTML='<div class="av">'+init+'</div><span style="flex:1">'+name+'</span><span style="font-size:11px;color:var(--m)">'+selectedEvent+'</span><span style="margin-left:8px;font-size:11px;font-weight:700;color:var(--gd);background:var(--gl);padding:2px 8px;border-radius:20px">'+photos.length+" foto's"+'</span>';
   document.getElementById('rec-list').insertBefore(row,document.getElementById('rec-list').firstChild);
+}
+
+function setBgColor(el){
+  document.querySelectorAll('#bg-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
+  el.classList.add('sel');
+  TB.color=el.dataset.color;
+  document.getElementById('tb-color').value=el.dataset.color;
+  render();
+}
+function setBgColorCustom(v){
+  document.querySelectorAll('#bg-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
+  TB.color=v; render();
+}
+function setTextColor(el){
+  document.querySelectorAll('#text-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
+  el.classList.add('sel');
+  TB.textColor=el.dataset.color;
+  document.getElementById('tb-textcolor').value=el.dataset.color;
+  render();
+}
+function setTextColorCustom(v){
+  document.querySelectorAll('#text-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
+  TB.textColor=v; render();
 }
 
 function resetApp(){
