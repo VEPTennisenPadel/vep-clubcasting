@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.5</title>
+<title>VEP Foto Upload v2.6</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -107,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.5</span>
+    <span class="badge badge-b">v2.6</span>
   </div>
 
   <div class="steps">
@@ -343,6 +343,10 @@ function loadSettings() {
       console.log('Instellingen geladen uit SharePoint:', uploadSettings);
     }
     settingsLoaded = true;
+    // Haal ook slide-afmetingen op uit Google Slides (heeft voorrang)
+    return fetchSlideInfo();
+  }).then(function() {
+    settingsLoaded = true;
   }).catch(function() {
     // Fallback: localStorage
     try {
@@ -352,11 +356,28 @@ function loadSettings() {
         if (s.width)   { uploadSettings.width  = s.width;  CW = s.width;  }
         if (s.height)  { uploadSettings.height = s.height; CH = s.height; }
         if (s.quality) { uploadSettings.quality = s.quality / 100; }
-        console.log('Instellingen geladen uit localStorage:', uploadSettings);
       }
     } catch(e) {}
+    // Probeer alsnog slide-info op te halen
+    fetchSlideInfo().catch(function(){});
     settingsLoaded = true;
   });
+}
+
+function fetchSlideInfo() {
+  return fetch(CFG.APPS_SCRIPT_URL + '?action=slideinfo')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success && d.widthPx && d.heightPx) {
+        uploadSettings.width  = d.widthPx;
+        uploadSettings.height = d.heightPx;
+        CW = d.widthPx;
+        CH = d.heightPx;
+        console.log('Slide afmetingen geladen:', d.widthPx + 'x' + d.heightPx + 'px (' + d.widthPt + 'x' + d.heightPt + 'pt)');
+      }
+    }).catch(function(e) {
+      console.log('Slide info niet beschikbaar, gebruik ingestelde waarden');
+    });
 }
 
 // ─────────────────────────────────────────────────────────

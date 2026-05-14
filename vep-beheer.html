@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.8</title>
+<title>VEP Beheer v4.9</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--red:#ef4444;--red-light:#fef2f2;--radius:10px;--radius-lg:14px;--border:1px solid #e5e7eb;--text:#111827;--muted:#6b7280;--bg:#f9fafb;--white:#fff;--shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -87,21 +87,14 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
   <div class="header">
     <div class="logo">⚙️</div>
     <div>
-      <h1>VEP Beheer</h1>
+      <h1>VEP Event Beheer</h1>
       <p>Tennis &amp; Padel — Clubcasting</p>
     </div>
     <span class="badge badge-admin" style="margin-left:auto">Beheerder</span>
-    <span class="badge badge-version">v4.8</span>
+    <span class="badge badge-version">v4.9</span>
   </div>
 
-  <!-- Tab navigatie -->
-  <div style="display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:2px solid #e5e7eb;padding-bottom:0">
-    <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">📅 Events</button>
-    <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">⚙️ Upload instellingen</button>
-  </div>
 
-  <!-- TAB 1: Events -->
-  <div class="tab-content active" id="tab-1">
   <div class="stats">
     <div class="stat"><p>Totaal events</p><p id="stat-total">—</p></div>
     <div class="stat"><p>Komende events</p><p id="stat-upcoming">—</p></div>
@@ -165,88 +158,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
 </div>
 </div>
 
-  </div><!-- /tab-1 -->
 
-  <!-- TAB 2: Upload instellingen -->
-  <div class="tab-content" id="tab-2">
-    <div class="card">
-      <div class="card-title">🖼️ Canvas afmetingen</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Stel de breedte en hoogte in van de geëxporteerde compilatie-afbeelding. Pas dit aan op de beschikbare ruimte in Google Slides (standaard 1920×1080).</p>
-      
-      <div class="setting-row">
-        <div class="setting-info">
-          <h3>Formaat</h3>
-          <p>Kies een standaard verhouding of stel handmatig in</p>
-        </div>
-        <div class="setting-control">
-          <button class="preset-btn active" id="preset-1920" onclick="setPreset(1920,1080,this)">1920×1080 (Full HD)</button>
-          <button class="preset-btn" id="preset-1280" onclick="setPreset(1280,720,this)">1280×720 (HD)</button>
-          <button class="preset-btn" id="preset-3840" onclick="setPreset(3840,2160,this)">3840×2160 (4K)</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <h3>Handmatige afmetingen</h3>
-          <p>Breedte × Hoogte in pixels</p>
-        </div>
-        <div class="setting-control">
-          <div class="dim-inputs">
-            <input type="number" id="set-width" value="1920" min="640" max="7680" step="1" oninput="onDimChange()">
-            <span>×</span>
-            <input type="number" id="set-height" value="1080" min="360" max="4320" step="1" oninput="onDimChange()">
-            <span style="font-size:12px;color:var(--muted)">px</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📊 Exportkwaliteit</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Hogere kwaliteit = betere afbeelding, maar groter bestand en langere uploadtijd.</p>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <h3>JPEG kwaliteit</h3>
-          <p>Aanbevolen: 85–92% voor clubcasting schermen</p>
-        </div>
-        <div class="setting-control">
-          <div class="quality-bar">
-            <input type="range" id="set-quality" min="50" max="100" value="92" oninput="onQualityChange()">
-            <span id="quality-val">92%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <h3>Kwaliteitsvoorkeuzen</h3>
-          <p></p>
-        </div>
-        <div class="setting-control">
-          <button class="preset-btn" onclick="setQuality(75,this)">75% — Klein</button>
-          <button class="preset-btn" onclick="setQuality(85,this)">85% — Normaal</button>
-          <button class="preset-btn active" onclick="setQuality(92,this)">92% — Hoog</button>
-          <button class="preset-btn" onclick="setQuality(100,this)">100% — Max</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="background:var(--green-light);border-color:var(--green)">
-      <div style="display:flex;align-items:center;gap:12px">
-        <span style="font-size:24px">ℹ️</span>
-        <div>
-          <p style="font-size:13px;font-weight:600;color:var(--green-dark);margin-bottom:4px">Hoe werkt dit?</p>
-          <p style="font-size:12px;color:var(--green-dark)">Deze instellingen worden opgeslagen in SharePoint. De upload-app laadt ze automatisch zodat alle leden dezelfde kwaliteit gebruiken. Wijzigingen zijn direct actief voor nieuwe uploads.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn-p" onclick="saveSettings()">💾 Instellingen opslaan</button>
-      <span class="save-indicator" id="save-indicator">✓ Opgeslagen!</span>
-    </div>
-  </div><!-- /tab-2 -->
 
 <!-- Edit modal -->
 <div class="modal-overlay" id="edit-modal">
@@ -562,18 +474,33 @@ document.getElementById('login-btn').addEventListener('click', function() {
 // TAB NAVIGATIE
 var SETTINGS_API = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/VEPSettings/items';
 
-function switchTab(n) {
-  [1,2].forEach(function(i) {
-    document.getElementById('tab-'+i).classList.toggle('active', i===n);
-    document.getElementById('tab-btn-'+i).classList.toggle('active', i===n);
-  });
-  if (n===2) loadSettings();
+
+
+
+  fetch(CONFIG.APPS_SCRIPT_URL + '?action=slideinfo')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        slideInfoData = d;
+        var txt = 'Google Slides: ' + d.widthPx + ' × ' + d.heightPx + ' px (' + d.widthPt + ' × ' + d.heightPt + ' pt)';
+        document.getElementById('slide-info-text').textContent = txt;
+        // Auto-apply
+        applySlideInfo();
+      } else {
+        document.getElementById('slide-info-text').textContent = 'Kon afmetingen niet laden';
+      }
+    }).catch(function() {
+      if (bar) bar.style.display = 'none';
+    });
 }
 
-function loadSettings() {
-  getToken().then(function(tok) {
-    return fetch(SETTINGS_API + '?expand=fields(select=Title,SettingValue)', {
-      headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
+
+
+);
+  if (n===2) { loadSettings(); fetchSlideInfo(); }
+}
+
+
     });
   }).then(function(r) { return r.json(); })
   .then(function(d) {
@@ -593,11 +520,7 @@ function loadSettings() {
   }).catch(function(){});
 }
 
-function saveSettings() {
-  var w = parseInt(document.getElementById('set-width').value)||1920;
-  var h = parseInt(document.getElementById('set-height').value)||1080;
-  var q = parseInt(document.getElementById('set-quality').value)||92;
-  var val = JSON.stringify({width:w, height:h, quality:q});
+);
   getToken().then(function(tok) {
     return fetch(SETTINGS_API + '?expand=fields(select=Title,SettingValue)', {
       headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
@@ -632,36 +555,21 @@ function saveSettings() {
   });
 }
 
-function setPreset(w, h, el) {
-  document.getElementById('set-width').value  = w;
-  document.getElementById('set-height').value = h;
-  highlightPreset(w, h);
-}
 
-function highlightPreset(w, h) {
-  document.querySelectorAll('[id^=preset-]').forEach(function(b){ b.classList.remove('active'); });
+
+);
   if (w===1920 && h===1080) document.getElementById('preset-1920').classList.add('active');
   else if (w===1280 && h===720)  document.getElementById('preset-1280').classList.add('active');
   else if (w===3840 && h===2160) document.getElementById('preset-3840').classList.add('active');
 }
 
-function onDimChange() {
-  highlightPreset(
-    parseInt(document.getElementById('set-width').value)||1920,
-    parseInt(document.getElementById('set-height').value)||1080
-  );
-}
 
-function setQuality(q, el) {
-  document.getElementById('set-quality').value = q;
-  document.getElementById('quality-val').textContent = q + '%';
-  document.querySelectorAll('#quality-presets .preset-btn').forEach(function(b){ b.classList.remove('active'); });
+
+);
   el.classList.add('active');
 }
 
-function onQualityChange() {
-  document.getElementById('quality-val').textContent = document.getElementById('set-quality').value + '%';
-}
+
 
 </script>
 </body>
