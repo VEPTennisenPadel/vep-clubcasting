@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Beheer — Events v4.7</title>
+<title>VEP Beheer — Events v4.8</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--red:#ef4444;--red-light:#fef2f2;--radius:10px;--radius-lg:14px;--border:1px solid #e5e7eb;--text:#111827;--muted:#6b7280;--bg:#f9fafb;--white:#fff;--shadow:0 1px 3px rgba(0,0,0,.08)}
@@ -65,7 +65,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
 </style>
 </head>
 <body>
- 
+
 <!-- Login scherm -->
 <div id="login-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f9fafb">
   <div style="background:white;border:1px solid #e5e7eb;border-radius:14px;padding:2.5rem;max-width:360px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)">
@@ -80,7 +80,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
     <p id="login-error" style="font-size:12px;color:#b91c1c;margin-top:8px;display:none"></p>
   </div>
 </div>
- 
+
 <!-- Hoofd app -->
 <div id="main-app" style="display:none">
 <div class="container">
@@ -93,13 +93,13 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
     <span class="badge badge-admin" style="margin-left:auto">Beheerder</span>
     <span class="badge badge-version">v4.8</span>
   </div>
- 
+
   <!-- Tab navigatie -->
   <div style="display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:2px solid #e5e7eb;padding-bottom:0">
     <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">📅 Events</button>
     <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">⚙️ Upload instellingen</button>
   </div>
- 
+
   <!-- TAB 1: Events -->
   <div class="tab-content active" id="tab-1">
   <div class="stats">
@@ -164,9 +164,9 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
   </div>
 </div>
 </div>
- 
+
   </div><!-- /tab-1 -->
- 
+
   <!-- TAB 2: Upload instellingen -->
   <div class="tab-content" id="tab-2">
     <div class="card">
@@ -184,7 +184,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
           <button class="preset-btn" id="preset-3840" onclick="setPreset(3840,2160,this)">3840×2160 (4K)</button>
         </div>
       </div>
- 
+
       <div class="setting-row">
         <div class="setting-info">
           <h3>Handmatige afmetingen</h3>
@@ -200,11 +200,11 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
         </div>
       </div>
     </div>
- 
+
     <div class="card">
       <div class="card-title">📊 Exportkwaliteit</div>
       <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Hogere kwaliteit = betere afbeelding, maar groter bestand en langere uploadtijd.</p>
- 
+
       <div class="setting-row">
         <div class="setting-info">
           <h3>JPEG kwaliteit</h3>
@@ -217,7 +217,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
           </div>
         </div>
       </div>
- 
+
       <div class="setting-row">
         <div class="setting-info">
           <h3>Kwaliteitsvoorkeuzen</h3>
@@ -231,7 +231,7 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
         </div>
       </div>
     </div>
- 
+
     <div class="card" style="background:var(--green-light);border-color:var(--green)">
       <div style="display:flex;align-items:center;gap:12px">
         <span style="font-size:24px">ℹ️</span>
@@ -241,13 +241,13 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
         </div>
       </div>
     </div>
- 
+
     <div class="btn-row">
       <button class="btn-p" onclick="saveSettings()">💾 Instellingen opslaan</button>
       <span class="save-indicator" id="save-indicator">✓ Opgeslagen!</span>
     </div>
   </div><!-- /tab-2 -->
- 
+
 <!-- Edit modal -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
@@ -276,9 +276,9 @@ input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,
     </div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <script>
 var CLIENT_ID = 'b2e58045-5ea5-41e5-ae2d-7546465fd54d';
 var TENANT_ID = '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca';
@@ -286,13 +286,13 @@ var LIST_NAME = 'VEPEvents';
 var SITE_PATH = 'veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:';
 var GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
 var LIST_API = GRAPH_BASE + '/sites/' + encodeURIComponent(SITE_PATH) + '/lists/' + LIST_NAME + '/items';
- 
+
 var events = [];
 var selectedEmoji = '🏆';
 var editingId = null;
 var msalApp = null;
 var loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
- 
+
 // Load MSAL from local file
 function loadScript(url, cb) {
   var s = document.createElement('script');
@@ -301,7 +301,7 @@ function loadScript(url, cb) {
   s.onerror = function() { cb(new Error('Failed: ' + url)); };
   document.head.appendChild(s);
 }
- 
+
 var msalLocalUrl = window.location.href.replace(/[^/]*$/, '') + 'msal-browser.min.js';
 loadScript(msalLocalUrl, function(err) {
   if (err || typeof msal === 'undefined') {
@@ -317,7 +317,7 @@ loadScript(msalLocalUrl, function(err) {
     initMSAL();
   }
 });
- 
+
 function initMSAL() {
   var config = {
     auth: {
@@ -341,13 +341,13 @@ function initMSAL() {
     });
   });
 }
- 
+
 function showLoginError(msg) {
   var el = document.getElementById('login-error');
   el.textContent = msg;
   el.style.display = 'block';
 }
- 
+
 function showApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'block';
@@ -357,7 +357,7 @@ function showApp() {
   setupEventListeners();
   loadEvents();
 }
- 
+
 function getToken() {
   var accounts = msalApp.getAllAccounts();
   if (!accounts.length) return Promise.reject('Niet ingelogd');
@@ -367,11 +367,11 @@ function getToken() {
       return msalApp.acquireTokenPopup(loginRequest).then(function(r) { return r.accessToken; });
     });
 }
- 
+
 function authH(token) {
   return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json', 'Content-Type': 'application/json' };
 }
- 
+
 function loadEvents() {
   setLoading(true);
   getToken().then(function(token) {
@@ -398,7 +398,7 @@ function loadEvents() {
     setLoading(false);
   });
 }
- 
+
 function addEvent() {
   var name = document.getElementById('new-name').value.trim();
   var dateFrom = document.getElementById('new-date-from').value;
@@ -417,7 +417,7 @@ function addEvent() {
     clearForm(); loadEvents();
   }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
 }
- 
+
 function deleteEvent(id) {
   if (!confirm('Dit event verwijderen?')) return;
   getToken().then(function(token) {
@@ -427,7 +427,7 @@ function deleteEvent(id) {
     showToast('Event verwijderd', 'success'); loadEvents();
   }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
 }
- 
+
 function saveEdit() {
   var name = document.getElementById('edit-name').value.trim();
   var dateFrom = document.getElementById('edit-date-from').value;
@@ -444,7 +444,7 @@ function saveEdit() {
     showToast('Bijgewerkt ✅', 'success'); closeEditModal(); loadEvents();
   }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
 }
- 
+
 function renderEvents() {
   var container = document.getElementById('events-container');
   if (!events.length) {
@@ -472,19 +472,19 @@ function renderEvents() {
   });
   container.innerHTML = html + '</div>';
 }
- 
+
 function updateStats() {
   var today = new Date().toISOString().split('T')[0];
   document.getElementById('stat-total').textContent = events.length;
   document.getElementById('stat-upcoming').textContent = events.filter(function(e){return e.DateFrom>=today;}).length;
   document.getElementById('stat-today').textContent = events.filter(function(e){return e.DateFrom<=today&&e.DateTo>=today;}).length;
 }
- 
+
 function fmtDate(d) {
   if (!d) return '—';
   var p = d.split('-'); return p[2]+'-'+p[1]+'-'+p[0];
 }
- 
+
 function clearForm() {
   document.getElementById('new-name').value = '';
   var today = new Date().toISOString().split('T')[0];
@@ -494,7 +494,7 @@ function clearForm() {
   selectedEmoji = '🏆';
   document.querySelectorAll('.emoji-opt').forEach(function(o,i){o.classList.toggle('sel',i===0);});
 }
- 
+
 function openEditModal(id) {
   var ev = events.find(function(e){return e.id===id;});
   if (!ev) return;
@@ -505,17 +505,17 @@ function openEditModal(id) {
   document.getElementById('edit-category').value = ev.Category||'Tennis';
   document.getElementById('edit-modal').classList.add('open');
 }
- 
+
 function closeEditModal() {
   document.getElementById('edit-modal').classList.remove('open');
   editingId = null;
 }
- 
+
 function setLoading(v) {
   var el = document.getElementById('loading-spinner');
   if (el) el.style.display = v ? 'inline' : 'none';
 }
- 
+
 var toastTimer;
 function showToast(msg, type) {
   var t = document.getElementById('toast');
@@ -524,7 +524,7 @@ function showToast(msg, type) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){t.classList.remove('show');}, 3000);
 }
- 
+
 function setupEventListeners() {
   document.getElementById('login-btn').addEventListener('click', function() {
     if (!msalApp) { showLoginError('App nog niet geladen, probeer opnieuw.'); return; }
@@ -552,12 +552,117 @@ function setupEventListeners() {
     if (btn.dataset.action === 'delete') deleteEvent(btn.dataset.id);
   });
 }
- 
+
 // Login button (available before app init)
 document.getElementById('login-btn').addEventListener('click', function() {
   if (!msalApp) { showLoginError('App nog niet geladen, probeer opnieuw.'); return; }
   msalApp.loginRedirect(loginRequest);
 });
+
+// TAB NAVIGATIE
+var SETTINGS_API = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/VEPSettings/items';
+
+function switchTab(n) {
+  [1,2].forEach(function(i) {
+    document.getElementById('tab-'+i).classList.toggle('active', i===n);
+    document.getElementById('tab-btn-'+i).classList.toggle('active', i===n);
+  });
+  if (n===2) loadSettings();
+}
+
+function loadSettings() {
+  getToken().then(function(tok) {
+    return fetch(SETTINGS_API + '?expand=fields(select=Title,SettingValue)', {
+      headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
+    });
+  }).then(function(r) { return r.json(); })
+  .then(function(d) {
+    var items = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
+    if (items.length > 0 && items[0].fields.SettingValue) {
+      try {
+        var val = JSON.parse(items[0].fields.SettingValue);
+        if (val.width)  document.getElementById('set-width').value  = val.width;
+        if (val.height) document.getElementById('set-height').value = val.height;
+        if (val.quality) {
+          document.getElementById('set-quality').value = val.quality;
+          document.getElementById('quality-val').textContent = val.quality + '%';
+        }
+        highlightPreset(val.width||1920, val.height||1080);
+      } catch(e) {}
+    }
+  }).catch(function(){});
+}
+
+function saveSettings() {
+  var w = parseInt(document.getElementById('set-width').value)||1920;
+  var h = parseInt(document.getElementById('set-height').value)||1080;
+  var q = parseInt(document.getElementById('set-quality').value)||92;
+  var val = JSON.stringify({width:w, height:h, quality:q});
+  getToken().then(function(tok) {
+    return fetch(SETTINGS_API + '?expand=fields(select=Title,SettingValue)', {
+      headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
+    }).then(function(r){ return r.json(); })
+    .then(function(d) {
+      var existing = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
+      if (existing.length > 0) {
+        return fetch(SETTINGS_API + '/' + existing[0].id + '/fields', {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ SettingValue: val })
+        });
+      } else {
+        return fetch(SETTINGS_API, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fields: { Title: 'upload_settings', SettingValue: val } })
+        });
+      }
+    });
+  }).then(function() {
+    var ind = document.getElementById('save-indicator');
+    ind.classList.add('show');
+    setTimeout(function(){ ind.classList.remove('show'); }, 2500);
+    showToast('Opgeslagen! (' + w + 'x' + h + ', ' + q + '%) OK', 'success');
+  }).catch(function() {
+    try { localStorage.setItem('vep_upload_settings', JSON.stringify({width:w,height:h,quality:q})); } catch(e) {}
+    showToast('Lokaal opgeslagen', 'success');
+    var ind = document.getElementById('save-indicator');
+    ind.classList.add('show');
+    setTimeout(function(){ ind.classList.remove('show'); }, 2500);
+  });
+}
+
+function setPreset(w, h, el) {
+  document.getElementById('set-width').value  = w;
+  document.getElementById('set-height').value = h;
+  highlightPreset(w, h);
+}
+
+function highlightPreset(w, h) {
+  document.querySelectorAll('[id^=preset-]').forEach(function(b){ b.classList.remove('active'); });
+  if (w===1920 && h===1080) document.getElementById('preset-1920').classList.add('active');
+  else if (w===1280 && h===720)  document.getElementById('preset-1280').classList.add('active');
+  else if (w===3840 && h===2160) document.getElementById('preset-3840').classList.add('active');
+}
+
+function onDimChange() {
+  highlightPreset(
+    parseInt(document.getElementById('set-width').value)||1920,
+    parseInt(document.getElementById('set-height').value)||1080
+  );
+}
+
+function setQuality(q, el) {
+  document.getElementById('set-quality').value = q;
+  document.getElementById('quality-val').textContent = q + '%';
+  document.querySelectorAll('#quality-presets .preset-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function onQualityChange() {
+  document.getElementById('quality-val').textContent = document.getElementById('set-quality').value + '%';
+}
+
 </script>
 </body>
 </html>
