@@ -6,221 +6,238 @@
 <title>VEP Beheer v4.9</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--green:#1D9E75;--green-light:#E1F5EE;--green-dark:#0F6E56;--red:#ef4444;--red-light:#fef2f2;--radius:10px;--radius-lg:14px;--border:1px solid #e5e7eb;--text:#111827;--muted:#6b7280;--bg:#f9fafb;--white:#fff;--shadow:0 1px 3px rgba(0,0,0,.08)}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
-.container{max-width:680px;margin:0 auto;padding:2rem 1rem 4rem}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:var(--border)}
-.logo{width:40px;height:40px;border-radius:var(--radius);background:var(--green);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+:root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:1.75rem}
+.logo{width:42px;height:42px;border-radius:var(--r);background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .header h1{font-size:17px;font-weight:700}
-.header p{font-size:13px;color:var(--muted);margin-top:1px}
-.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.header p{font-size:13px;color:var(--m);margin-top:1px}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
 .badge-admin{background:#fef3c7;color:#92400e}
 .badge-version{background:#e0f2fe;color:#0369a1;margin-left:6px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.stat{background:var(--white);border:var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow)}
-.stat p:first-child{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.stat p:last-child{font-size:22px;font-weight:700;color:var(--text)}
-.card{background:var(--white);border:var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+.stat{background:var(--w);border:var(--b);border-radius:var(--rl);padding:12px 14px;box-shadow:var(--sh)}
+.stat p:first-child{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.stat p:last-child{font-size:22px;font-weight:700;color:var(--t)}
+.card{background:var(--w);border:var(--b);border-radius:var(--rl);padding:1.25rem;margin-bottom:.875rem;box-shadow:var(--sh)}
 .card-title{font-size:14px;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-input[type=text],input[type=date],select{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:var(--radius);font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;font-family:inherit}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+input[type=text],input[type=date],select{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:var(--r);font-size:14px;color:var(--t);outline:none;transition:border-color .15s;background:var(--w);font-family:inherit}
 input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .emoji-row{display:flex;flex-wrap:wrap;gap:6px}
-.emoji-opt{width:36px;height:36px;border-radius:8px;border:1px solid #d1d5db;background:var(--bg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.emoji-opt:hover,.emoji-opt.sel{border-color:var(--green);background:var(--green-light)}
+.emoji-opt{width:36px;height:36px;border-radius:8px;background:var(--bg);border:1px solid #d1d5db;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .15s}
+.emoji-opt:hover,.emoji-opt.sel{background:var(--gl);border-color:var(--green);transform:scale(1.1)}
 .btn-row{display:flex;gap:8px;margin-top:1.25rem}
-.btn-p{flex:1;padding:10px;border-radius:var(--radius);background:var(--green);color:white;border:none;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
-.btn-p:hover{background:var(--green-dark)}
-.btn-s{padding:10px 16px;border-radius:var(--radius);background:var(--white);color:var(--muted);border:1px solid #d1d5db;font-size:14px;cursor:pointer}
-.btn-danger{padding:6px 10px;border-radius:8px;background:var(--red-light);color:var(--red);border:1px solid #fecaca;font-size:12px;cursor:pointer}
-.btn-icon{padding:6px 10px;border-radius:8px;background:var(--bg);color:var(--muted);border:1px solid #e5e7eb;font-size:12px;cursor:pointer}
-.btn-icon:hover{background:var(--green-light);color:var(--green-dark);border-color:var(--green)}
+.btn-p{flex:1;padding:10px;border-radius:var(--r);background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+.btn-p:hover{background:var(--gd)}
+.btn-p:disabled{opacity:.4;cursor:default}
+.btn-s{padding:10px 16px;border-radius:var(--r);background:var(--w);color:var(--m);border:1px solid #d1d5db;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-s:hover{border-color:var(--green);color:var(--gd)}
 .events-list{display:flex;flex-direction:column;gap:8px}
-.event-row{background:var(--white);border:var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
-.event-row.past{opacity:.55}
-.event-emoji{font-size:22px;flex-shrink:0;width:36px;text-align:center}
-.event-info{flex:1;min-width:0}
-.event-name{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.event-meta{font-size:12px;color:var(--muted)}
-.event-actions{display:flex;gap:6px;flex-shrink:0}
-.event-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.badge-upcoming{background:var(--green-light);color:var(--green-dark)}
-.badge-today{background:#fef3c7;color:#92400e}
-.badge-past{background:#f3f4f6;color:var(--muted)}
-.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
-.empty .em-icon{font-size:2.5rem;margin-bottom:.75rem}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--text);color:white;padding:12px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:999}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.success{background:var(--green-dark)}
-.toast.error{background:var(--red)}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(29,158,117,.3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px}
+.event-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);border:1px solid #e5e7eb;background:var(--w);transition:all .15s}
+.event-row:hover{border-color:#d1d5db;box-shadow:var(--sh)}
+.ev-emoji{font-size:20px;flex-shrink:0;width:32px;text-align:center}
+.ev-info{flex:1;min-width:0}
+.ev-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-meta{font-size:11px;color:var(--m);margin-top:2px}
+.ev-cat{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--gl);color:var(--gd)}
+.ev-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-icon{width:30px;height:30px;border-radius:8px;border:1px solid #e5e7eb;background:var(--w);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.btn-icon:hover{border-color:var(--green);background:var(--gl)}
+.btn-icon.del:hover{border-color:#fca5a5;background:#fef2f2}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(29,158,117,.3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.loading{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--m);padding:1rem 0}
+.empty{text-align:center;padding:2rem;color:var(--m);font-size:13px}
+.err-box{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:.875rem;display:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--white);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:scale(.96);transition:transform .2s}
+.modal{background:var(--w);border-radius:var(--rl);padding:1.5rem;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.15);transform:scale(.95);transition:transform .2s}
 .modal-overlay.open .modal{transform:scale(1)}
 .modal-title{font-size:15px;font-weight:700;margin-bottom:1.25rem}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#111;color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:200;opacity:0;transition:all .3s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#dc2626}
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem}
+.login-card{background:var(--w);border:var(--b);border-radius:var(--rl);padding:2.5rem 2rem;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.login-logo{width:64px;height:64px;border-radius:16px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 1.25rem}
+.login-card h2{font-size:18px;font-weight:700;margin-bottom:8px}
+.login-card p{font-size:13px;color:var(--m);margin-bottom:1.5rem}
+.btn-ms{width:100%;padding:11px;border-radius:var(--r);background:#0078d4;color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btn-ms:hover{background:#106ebe}
+.login-err{font-size:12px;color:#dc2626;margin-top:.75rem;min-height:18px}
+#app{display:none}
 </style>
 </head>
 <body>
 
 <!-- Login scherm -->
-<div id="login-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f9fafb">
-  <div style="background:white;border:1px solid #e5e7eb;border-radius:14px;padding:2.5rem;max-width:360px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)">
-    <div style="width:56px;height:56px;border-radius:12px;background:#1D9E75;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 1.25rem">⚙️</div>
-    <h1 style="font-size:18px;font-weight:700;margin-bottom:6px">VEP Event Beheer</h1>
-    <p style="font-size:13px;color:#6b7280;margin-bottom:1.75rem">Log in met je VEP Microsoft-account om events te beheren.</p>
-    <button id="login-btn" style="width:100%;padding:11px;background:#0078d4;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">
-      <svg width="18" height="18" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">⚙️</div>
+    <h2>VEP Event Beheer</h2>
+    <p>Log in met je VEP Microsoft-account om events te beheren.</p>
+    <button class="btn-ms" id="login-btn">
+      <svg width="18" height="18" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
       Inloggen met Microsoft
     </button>
-    <p style="font-size:11px;color:#9ca3af;margin-top:1rem">Alleen voor beheerders van VEP Tennis &amp; Padel</p>
-    <p id="login-error" style="font-size:12px;color:#b91c1c;margin-top:8px;display:none"></p>
+    <div class="login-err" id="login-err"></div>
+    <p style="font-size:11px;color:var(--m);margin-top:1rem">Alleen voor beheerders van VEP Tennis &amp; Padel</p>
   </div>
 </div>
 
-<!-- Hoofd app -->
-<div id="main-app" style="display:none">
+<!-- App -->
+<div id="app">
 <div class="container">
   <div class="header">
     <div class="logo">⚙️</div>
-    <div>
-      <h1>VEP Event Beheer</h1>
-      <p>Tennis &amp; Padel — Clubcasting</p>
-    </div>
-    <span class="badge badge-admin" style="margin-left:auto">Beheerder</span>
+    <div><h1>VEP Event Beheer</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
+    <span class="badge badge-admin" style="margin-left:auto" id="user-badge">Beheerder</span>
     <span class="badge badge-version">v4.9</span>
   </div>
 
+  <div class="err-box" id="err-box"></div>
 
   <div class="stats">
     <div class="stat"><p>Totaal events</p><p id="stat-total">—</p></div>
     <div class="stat"><p>Komende events</p><p id="stat-upcoming">—</p></div>
-    <div class="stat"><p>Actief vandaag</p><p id="stat-today">—</p></div>
+    <div class="stat"><p>Al geweest</p><p id="stat-past">—</p></div>
   </div>
+
+  <!-- Nieuw event -->
   <div class="card">
     <div class="card-title">➕ Nieuw event toevoegen</div>
-    <div class="field">
-      <label>Event naam</label>
-      <input type="text" id="new-name" placeholder="bv. Zomertornooi 2025" maxlength="80">
-    </div>
+    <div class="field"><label>Event naam</label><input type="text" id="ev-name" placeholder="bv. Zomerfestival 2025"></div>
     <div class="form-row">
-      <div class="field"><label>Datum van</label><input type="date" id="new-date-from"></div>
-      <div class="field"><label>Datum tot</label><input type="date" id="new-date-to"></div>
+      <div class="field"><label>Datum van</label><input type="date" id="ev-from"></div>
+      <div class="field"><label>Datum tot</label><input type="date" id="ev-to"></div>
     </div>
     <div class="field">
       <label>Categorie</label>
-      <select id="new-category">
+      <select id="ev-cat">
         <option value="Tennis">🎾 Tennis</option>
         <option value="Padel">🏓 Padel</option>
-        <option value="Jeugd">⭐ Jeugd</option>
-        <option value="Club">🏠 Club</option>
-        <option value="Feest">🎉 Feest</option>
-        <option value="Toernooi">🏆 Toernooi</option>
-        <option value="Training">💪 Training</option>
-        <option value="Overig">📅 Overig</option>
+        <option value="Sociaal">🎉 Sociaal</option>
+        <option value="Jeugd">👦 Jeugd</option>
+        <option value="Competitie">🏆 Competitie</option>
+        <option value="Anders">📌 Anders</option>
       </select>
     </div>
     <div class="field">
-      <label>Emoji icoon</label>
+      <label>Emoji</label>
       <div class="emoji-row" id="emoji-row">
-        <div class="emoji-opt sel" data-emoji="🏆">🏆</div>
-        <div class="emoji-opt" data-emoji="🎾">🎾</div>
-        <div class="emoji-opt" data-emoji="🏓">🏓</div>
-        <div class="emoji-opt" data-emoji="⭐">⭐</div>
-        <div class="emoji-opt" data-emoji="🎉">🎉</div>
-        <div class="emoji-opt" data-emoji="🏠">🏠</div>
-        <div class="emoji-opt" data-emoji="💪">💪</div>
-        <div class="emoji-opt" data-emoji="🌞">🌞</div>
-        <div class="emoji-opt" data-emoji="🎊">🎊</div>
-        <div class="emoji-opt" data-emoji="🥇">🥇</div>
-        <div class="emoji-opt" data-emoji="🌟">🌟</div>
-        <div class="emoji-opt" data-emoji="📅">📅</div>
+        <div class="emoji-opt sel" data-emoji="🎾" onclick="selEmoji(this)">🎾</div>
+        <div class="emoji-opt" data-emoji="🏓" onclick="selEmoji(this)">🏓</div>
+        <div class="emoji-opt" data-emoji="🏆" onclick="selEmoji(this)">🏆</div>
+        <div class="emoji-opt" data-emoji="🎉" onclick="selEmoji(this)">🎉</div>
+        <div class="emoji-opt" data-emoji="👦" onclick="selEmoji(this)">👦</div>
+        <div class="emoji-opt" data-emoji="🌞" onclick="selEmoji(this)">🌞</div>
+        <div class="emoji-opt" data-emoji="⭐" onclick="selEmoji(this)">⭐</div>
+        <div class="emoji-opt" data-emoji="🎵" onclick="selEmoji(this)">🎵</div>
+        <div class="emoji-opt" data-emoji="🍕" onclick="selEmoji(this)">🍕</div>
+        <div class="emoji-opt" data-emoji="🏅" onclick="selEmoji(this)">🏅</div>
+        <div class="emoji-opt" data-emoji="🎊" onclick="selEmoji(this)">🎊</div>
+        <div class="emoji-opt" data-emoji="📅" onclick="selEmoji(this)">📅</div>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn-s" id="btn-clear">Wis</button>
-      <button class="btn-p" id="btn-add">✅ Event toevoegen</button>
-    </div>
+    <div id="form-err" style="font-size:13px;color:#dc2626;min-height:18px;margin-bottom:8px"></div>
+    <button class="btn-p" id="btn-add" onclick="addEvent()">
+      <span id="btn-add-icon">✅</span> Event toevoegen
+    </button>
   </div>
+
+  <!-- Events lijst -->
   <div class="card">
     <div class="card-title">
-      📅 Huidige events
-      <span id="loading-spinner" style="display:none"><span class="spinner"></span></span>
-      <button class="btn-icon" style="margin-left:auto;font-size:13px" id="btn-refresh">↻ Vernieuwen</button>
+      📋 Huidige events
+      <button onclick="loadEvents()" style="margin-left:auto;padding:4px 10px;border-radius:20px;border:1px solid #d1d5db;background:none;font-size:12px;cursor:pointer;color:var(--m)">↻ Vernieuwen</button>
     </div>
-    <div id="events-container">
-      <div class="empty"><div class="em-icon">📅</div><p>Events worden geladen...</p></div>
-    </div>
+    <div id="events-container"><div class="loading"><span class="spinner"></span> Events laden...</div></div>
   </div>
 </div>
 </div>
-
-
 
 <!-- Edit modal -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-title">✏️ Event bewerken</div>
-    <div class="field"><label>Event naam</label><input type="text" id="edit-name" maxlength="80"></div>
+    <div class="field"><label>Event naam</label><input type="text" id="edit-name" placeholder="Event naam"></div>
     <div class="form-row">
-      <div class="field"><label>Datum van</label><input type="date" id="edit-date-from"></div>
-      <div class="field"><label>Datum tot</label><input type="date" id="edit-date-to"></div>
+      <div class="field"><label>Datum van</label><input type="date" id="edit-from"></div>
+      <div class="field"><label>Datum tot</label><input type="date" id="edit-to"></div>
     </div>
     <div class="field">
       <label>Categorie</label>
-      <select id="edit-category">
+      <select id="edit-cat">
         <option value="Tennis">🎾 Tennis</option>
         <option value="Padel">🏓 Padel</option>
-        <option value="Jeugd">⭐ Jeugd</option>
-        <option value="Club">🏠 Club</option>
-        <option value="Feest">🎉 Feest</option>
-        <option value="Toernooi">🏆 Toernooi</option>
-        <option value="Training">💪 Training</option>
-        <option value="Overig">📅 Overig</option>
+        <option value="Sociaal">🎉 Sociaal</option>
+        <option value="Jeugd">👦 Jeugd</option>
+        <option value="Competitie">🏆 Competitie</option>
+        <option value="Anders">📌 Anders</option>
       </select>
     </div>
+    <div class="field">
+      <label>Emoji</label>
+      <div class="emoji-row" id="edit-emoji-row">
+        <div class="emoji-opt sel" data-emoji="🎾" onclick="selEditEmoji(this)">🎾</div>
+        <div class="emoji-opt" data-emoji="🏓" onclick="selEditEmoji(this)">🏓</div>
+        <div class="emoji-opt" data-emoji="🏆" onclick="selEditEmoji(this)">🏆</div>
+        <div class="emoji-opt" data-emoji="🎉" onclick="selEditEmoji(this)">🎉</div>
+        <div class="emoji-opt" data-emoji="👦" onclick="selEditEmoji(this)">👦</div>
+        <div class="emoji-opt" data-emoji="🌞" onclick="selEditEmoji(this)">🌞</div>
+        <div class="emoji-opt" data-emoji="⭐" onclick="selEditEmoji(this)">⭐</div>
+        <div class="emoji-opt" data-emoji="🎵" onclick="selEditEmoji(this)">🎵</div>
+        <div class="emoji-opt" data-emoji="🍕" onclick="selEditEmoji(this)">🍕</div>
+        <div class="emoji-opt" data-emoji="🏅" onclick="selEditEmoji(this)">🏅</div>
+        <div class="emoji-opt" data-emoji="🎊" onclick="selEditEmoji(this)">🎊</div>
+        <div class="emoji-opt" data-emoji="📅" onclick="selEditEmoji(this)">📅</div>
+      </div>
+    </div>
     <div class="btn-row">
-      <button class="btn-s" id="btn-cancel-edit">Annuleren</button>
-      <button class="btn-p" id="btn-save-edit">💾 Opslaan</button>
+      <button class="btn-s" onclick="closeModal()">Annuleren</button>
+      <button class="btn-p" onclick="saveEdit()">💾 Opslaan</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
 
 <script>
-var CLIENT_ID = 'b2e58045-5ea5-41e5-ae2d-7546465fd54d';
-var TENANT_ID = '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca';
-var LIST_NAME = 'VEPEvents';
-var SITE_PATH = 'veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:';
-var GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
-var LIST_API = GRAPH_BASE + '/sites/' + encodeURIComponent(SITE_PATH) + '/lists/' + LIST_NAME + '/items';
+// ── CONFIG ──────────────────────────────────────────────
+var CLIENT_ID   = 'b2e58045-5ea5-41e5-ae2d-7546465fd54d';
+var TENANT_ID   = '1a3d504f-05a9-466a-bb8d-ba2e3f9e8dca';
+var REDIRECT    = window.location.href.split('?')[0].split('#')[0];
+var GRAPH       = 'https://graph.microsoft.com/v1.0';
+var SITE_PATH   = encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:');
+var LIST_API    = GRAPH + '/sites/' + SITE_PATH + '/lists/VEPEvents/items';
+var APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzXBA4HllGITD6rM-di97Y0JGQLVGI6DCRxpiflkv9gHOjlMG7leGe6zXIRka8zC2rS/exec';
 
-var events = [];
-var selectedEmoji = '🏆';
-var editingId = null;
-var msalApp = null;
 var loginRequest = { scopes: ['Sites.ReadWrite.All', 'User.Read'] };
+var msalApp = null;
+var allEvents = [];
+var editingId = null;
+var selectedEmoji = '🎾';
+var selectedEditEmoji = '🎾';
 
-// Load MSAL from local file
+// ── MSAL ────────────────────────────────────────────────
 function loadScript(url, cb) {
   var s = document.createElement('script');
   s.src = url;
   s.onload = function() { cb(null); };
-  s.onerror = function() { cb(new Error('Failed: ' + url)); };
+  s.onerror = function() { cb(new Error('Laden mislukt: ' + url)); };
   document.head.appendChild(s);
 }
 
 var msalLocalUrl = window.location.href.replace(/[^/]*$/, '') + 'msal-browser.min.js';
 loadScript(msalLocalUrl, function(err) {
   if (err || typeof msal === 'undefined') {
-    // Fallback to CDN
     loadScript('https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js', function(err2) {
       if (err2 || typeof msal === 'undefined') {
-        showLoginError('MSAL kon niet geladen worden. Probeer de pagina te herladen.');
+        showLoginError('MSAL kon niet geladen worden.');
       } else {
         initMSAL();
       }
@@ -232,11 +249,7 @@ loadScript(msalLocalUrl, function(err) {
 
 function initMSAL() {
   var config = {
-    auth: {
-      clientId: CLIENT_ID,
-      authority: 'https://login.microsoftonline.com/' + TENANT_ID,
-      redirectUri: window.location.href.split('?')[0].split('#')[0]
-    },
+    auth: { clientId: CLIENT_ID, authority: 'https://login.microsoftonline.com/' + TENANT_ID, redirectUri: REDIRECT },
     cache: { cacheLocation: 'sessionStorage' }
   };
   msalApp = new msal.PublicClientApplication(config);
@@ -244,9 +257,9 @@ function initMSAL() {
     msalApp.handleRedirectPromise().then(function(resp) {
       var accounts = msalApp.getAllAccounts();
       if (accounts.length > 0) {
-        showApp();
+        showApp(accounts[0]);
       } else {
-        // Show login button
+        showLogin();
       }
     }).catch(function(e) {
       showLoginError(e.message);
@@ -254,24 +267,25 @@ function initMSAL() {
   });
 }
 
-function showLoginError(msg) {
-  var el = document.getElementById('login-error');
-  el.textContent = msg;
-  el.style.display = 'block';
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 }
 
-function showApp() {
+function showApp(account) {
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('main-app').style.display = 'block';
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('new-date-from').value = today;
-  document.getElementById('new-date-to').value = today;
-  setupEventListeners();
+  document.getElementById('app').style.display = 'block';
+  var name = account.name || account.username;
+  document.getElementById('user-badge').textContent = name.split(' ')[0];
   loadEvents();
 }
 
+function showLoginError(msg) {
+  document.getElementById('login-err').textContent = msg;
+}
+
 function getToken() {
-  var accounts = msalApp.getAllAccounts();
+  var accounts = msalApp ? msalApp.getAllAccounts() : [];
   if (!accounts.length) return Promise.reject('Niet ingelogd');
   return msalApp.acquireTokenSilent({ scopes: loginRequest.scopes, account: accounts[0] })
     .then(function(r) { return r.accessToken; })
@@ -280,297 +294,192 @@ function getToken() {
     });
 }
 
-function authH(token) {
-  return { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json', 'Content-Type': 'application/json' };
-}
-
-function loadEvents() {
-  setLoading(true);
-  getToken().then(function(token) {
-    return fetch(LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)', { headers: authH(token) });
-  }).then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  }).then(function(data) {
-    events = data.value.map(function(item) {
-      return {
-        id: item.id,
-        Title: item.fields.Title || '',
-        DateFrom: (item.fields.DateFrom || '').split('T')[0],
-        DateTo: (item.fields.DateTo || '').split('T')[0],
-        Category: item.fields.Category || '',
-        Emoji: item.fields.Emoji || '📅'
-      };
-    });
-    renderEvents();
-    updateStats();
-    setLoading(false);
-  }).catch(function(e) {
-    showToast('Fout bij laden: ' + e.message, 'error');
-    setLoading(false);
-  });
-}
-
-function addEvent() {
-  var name = document.getElementById('new-name').value.trim();
-  var dateFrom = document.getElementById('new-date-from').value;
-  var dateTo = document.getElementById('new-date-to').value || dateFrom;
-  var category = document.getElementById('new-category').value;
-  if (!name) { showToast('Vul een eventnaam in', 'error'); return; }
-  if (!dateFrom) { showToast('Selecteer een startdatum', 'error'); return; }
-  getToken().then(function(token) {
-    return fetch(LIST_API, {
-      method: 'POST', headers: authH(token),
-      body: JSON.stringify({ fields: { Title: name, DateFrom: dateFrom, DateTo: dateTo, Category: category, Emoji: selectedEmoji } })
-    });
-  }).then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    showToast('Event toegevoegd! ✅', 'success');
-    clearForm(); loadEvents();
-  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
-}
-
-function deleteEvent(id) {
-  if (!confirm('Dit event verwijderen?')) return;
-  getToken().then(function(token) {
-    return fetch(LIST_API + '/' + id, { method: 'DELETE', headers: authH(token) });
-  }).then(function(r) {
-    if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status);
-    showToast('Event verwijderd', 'success'); loadEvents();
-  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
-}
-
-function saveEdit() {
-  var name = document.getElementById('edit-name').value.trim();
-  var dateFrom = document.getElementById('edit-date-from').value;
-  var dateTo = document.getElementById('edit-date-to').value;
-  var category = document.getElementById('edit-category').value;
-  if (!name) { showToast('Vul een naam in', 'error'); return; }
-  getToken().then(function(token) {
-    return fetch(LIST_API + '/' + editingId + '/fields', {
-      method: 'PATCH', headers: authH(token),
-      body: JSON.stringify({ Title: name, DateFrom: dateFrom, DateTo: dateTo, Category: category })
-    });
-  }).then(function(r) {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    showToast('Bijgewerkt ✅', 'success'); closeEditModal(); loadEvents();
-  }).catch(function(e) { showToast('Fout: ' + e.message, 'error'); });
-}
-
-function renderEvents() {
-  var container = document.getElementById('events-container');
-  if (!events.length) {
-    container.innerHTML = '<div class="empty"><div class="em-icon">📅</div><p>Nog geen events.</p></div>';
-    return;
-  }
-  var today = new Date().toISOString().split('T')[0];
-  var sorted = events.slice().sort(function(a,b) { return a.DateFrom > b.DateFrom ? 1 : -1; });
-  var html = '<div class="events-list">';
-  sorted.forEach(function(ev) {
-    var isPast = ev.DateTo < today;
-    var isToday = ev.DateFrom <= today && ev.DateTo >= today;
-    var bc = isToday ? 'badge-today' : isPast ? 'badge-past' : 'badge-upcoming';
-    var bt = isToday ? 'Vandaag' : isPast ? 'Voorbij' : 'Aankomend';
-    var ds = ev.DateFrom === ev.DateTo ? fmtDate(ev.DateFrom) : fmtDate(ev.DateFrom) + ' – ' + fmtDate(ev.DateTo);
-    html += '<div class="event-row' + (isPast?' past':'') + '">'
-      + '<div class="event-emoji">' + (ev.Emoji||'📅') + '</div>'
-      + '<div class="event-info"><div class="event-name">' + ev.Title + '</div>'
-      + '<div class="event-meta">' + ds + ' · ' + (ev.Category||'Event') + '</div></div>'
-      + '<span class="event-badge ' + bc + '">' + bt + '</span>'
-      + '<div class="event-actions">'
-      + '<button class="btn-icon" data-id="' + ev.id + '" data-action="edit">✏️</button>'
-      + '<button class="btn-danger" data-id="' + ev.id + '" data-action="delete">🗑</button>'
-      + '</div></div>';
-  });
-  container.innerHTML = html + '</div>';
-}
-
-function updateStats() {
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('stat-total').textContent = events.length;
-  document.getElementById('stat-upcoming').textContent = events.filter(function(e){return e.DateFrom>=today;}).length;
-  document.getElementById('stat-today').textContent = events.filter(function(e){return e.DateFrom<=today&&e.DateTo>=today;}).length;
-}
-
-function fmtDate(d) {
-  if (!d) return '—';
-  var p = d.split('-'); return p[2]+'-'+p[1]+'-'+p[0];
-}
-
-function clearForm() {
-  document.getElementById('new-name').value = '';
-  var today = new Date().toISOString().split('T')[0];
-  document.getElementById('new-date-from').value = today;
-  document.getElementById('new-date-to').value = today;
-  document.getElementById('new-category').value = 'Tennis';
-  selectedEmoji = '🏆';
-  document.querySelectorAll('.emoji-opt').forEach(function(o,i){o.classList.toggle('sel',i===0);});
-}
-
-function openEditModal(id) {
-  var ev = events.find(function(e){return e.id===id;});
-  if (!ev) return;
-  editingId = id;
-  document.getElementById('edit-name').value = ev.Title;
-  document.getElementById('edit-date-from').value = ev.DateFrom;
-  document.getElementById('edit-date-to').value = ev.DateTo;
-  document.getElementById('edit-category').value = ev.Category||'Tennis';
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function closeEditModal() {
-  document.getElementById('edit-modal').classList.remove('open');
-  editingId = null;
-}
-
-function setLoading(v) {
-  var el = document.getElementById('loading-spinner');
-  if (el) el.style.display = v ? 'inline' : 'none';
-}
-
-var toastTimer;
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast ' + (type||'success') + ' show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){t.classList.remove('show');}, 3000);
-}
-
-function setupEventListeners() {
-  document.getElementById('login-btn').addEventListener('click', function() {
-    if (!msalApp) { showLoginError('App nog niet geladen, probeer opnieuw.'); return; }
-    msalApp.loginRedirect(loginRequest);
-  });
-  document.getElementById('btn-add').addEventListener('click', addEvent);
-  document.getElementById('btn-clear').addEventListener('click', clearForm);
-  document.getElementById('btn-refresh').addEventListener('click', loadEvents);
-  document.getElementById('btn-save-edit').addEventListener('click', saveEdit);
-  document.getElementById('btn-cancel-edit').addEventListener('click', closeEditModal);
-  document.getElementById('edit-modal').addEventListener('click', function(e){
-    if (e.target === this) closeEditModal();
-  });
-  document.querySelectorAll('.emoji-opt').forEach(function(el) {
-    el.addEventListener('click', function() {
-      document.querySelectorAll('.emoji-opt').forEach(function(o){o.classList.remove('sel');});
-      el.classList.add('sel');
-      selectedEmoji = el.dataset.emoji;
-    });
-  });
-  document.getElementById('events-container').addEventListener('click', function(e) {
-    var btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    if (btn.dataset.action === 'edit') openEditModal(btn.dataset.id);
-    if (btn.dataset.action === 'delete') deleteEvent(btn.dataset.id);
-  });
-}
-
-// Login button (available before app init)
 document.getElementById('login-btn').addEventListener('click', function() {
   if (!msalApp) { showLoginError('App nog niet geladen, probeer opnieuw.'); return; }
   msalApp.loginRedirect(loginRequest);
 });
 
-// TAB NAVIGATIE
-var SETTINGS_API = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/VEPSettings/items';
-
-
-
-
-  fetch(CONFIG.APPS_SCRIPT_URL + '?action=slideinfo')
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.success) {
-        slideInfoData = d;
-        var txt = 'Google Slides: ' + d.widthPx + ' × ' + d.heightPx + ' px (' + d.widthPt + ' × ' + d.heightPt + ' pt)';
-        document.getElementById('slide-info-text').textContent = txt;
-        // Auto-apply
-        applySlideInfo();
-      } else {
-        document.getElementById('slide-info-text').textContent = 'Kon afmetingen niet laden';
-      }
-    }).catch(function() {
-      if (bar) bar.style.display = 'none';
-    });
-}
-
-
-
-);
-  if (n===2) { loadSettings(); fetchSlideInfo(); }
-}
-
-
+// ── EVENTS LADEN ────────────────────────────────────────
+function loadEvents() {
+  document.getElementById('events-container').innerHTML = '<div class="loading"><span class="spinner"></span> Events laden...</div>';
+  getToken().then(function(tok) {
+    return fetch(LIST_API + '?expand=fields(select=Title,DateFrom,DateTo,Category,Emoji)&$top=100', {
+      headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
     });
   }).then(function(r) { return r.json(); })
   .then(function(d) {
-    var items = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
-    if (items.length > 0 && items[0].fields.SettingValue) {
-      try {
-        var val = JSON.parse(items[0].fields.SettingValue);
-        if (val.width)  document.getElementById('set-width').value  = val.width;
-        if (val.height) document.getElementById('set-height').value = val.height;
-        if (val.quality) {
-          document.getElementById('set-quality').value = val.quality;
-          document.getElementById('quality-val').textContent = val.quality + '%';
-        }
-        highlightPreset(val.width||1920, val.height||1080);
-      } catch(e) {}
-    }
-  }).catch(function(){});
-}
-
-);
-  getToken().then(function(tok) {
-    return fetch(SETTINGS_API + '?expand=fields(select=Title,SettingValue)', {
-      headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
-    }).then(function(r){ return r.json(); })
-    .then(function(d) {
-      var existing = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
-      if (existing.length > 0) {
-        return fetch(SETTINGS_API + '/' + existing[0].id + '/fields', {
-          method: 'PATCH',
-          headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ SettingValue: val })
-        });
-      } else {
-        return fetch(SETTINGS_API, {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fields: { Title: 'upload_settings', SettingValue: val } })
-        });
-      }
-    });
-  }).then(function() {
-    var ind = document.getElementById('save-indicator');
-    ind.classList.add('show');
-    setTimeout(function(){ ind.classList.remove('show'); }, 2500);
-    showToast('Opgeslagen! (' + w + 'x' + h + ', ' + q + '%) OK', 'success');
-  }).catch(function() {
-    try { localStorage.setItem('vep_upload_settings', JSON.stringify({width:w,height:h,quality:q})); } catch(e) {}
-    showToast('Lokaal opgeslagen', 'success');
-    var ind = document.getElementById('save-indicator');
-    ind.classList.add('show');
-    setTimeout(function(){ ind.classList.remove('show'); }, 2500);
+    allEvents = (d.value || []).map(function(i) {
+      return {
+        id:       i.id,
+        listId:   i.id,
+        Title:    i.fields.Title,
+        DateFrom: (i.fields.DateFrom || '').split('T')[0],
+        DateTo:   (i.fields.DateTo   || '').split('T')[0],
+        Category: i.fields.Category || 'Anders',
+        Emoji:    i.fields.Emoji    || '📅'
+      };
+    }).sort(function(a, b) { return a.DateFrom > b.DateFrom ? 1 : -1; });
+    renderEvents();
+    updateStats();
+  }).catch(function(e) {
+    document.getElementById('events-container').innerHTML = '<div class="empty">Kon events niet laden: ' + e.message + '</div>';
   });
 }
 
-
-
-);
-  if (w===1920 && h===1080) document.getElementById('preset-1920').classList.add('active');
-  else if (w===1280 && h===720)  document.getElementById('preset-1280').classList.add('active');
-  else if (w===3840 && h===2160) document.getElementById('preset-3840').classList.add('active');
+function updateStats() {
+  var today = new Date().toISOString().split('T')[0];
+  var upcoming = allEvents.filter(function(e) { return e.DateFrom >= today; }).length;
+  var past     = allEvents.filter(function(e) { return e.DateTo < today; }).length;
+  document.getElementById('stat-total').textContent    = allEvents.length;
+  document.getElementById('stat-upcoming').textContent = upcoming;
+  document.getElementById('stat-past').textContent     = past;
 }
 
-
-
-);
-  el.classList.add('active');
+function renderEvents() {
+  var c = document.getElementById('events-container');
+  if (!allEvents.length) { c.innerHTML = '<div class="empty">Nog geen events aangemaakt.</div>'; return; }
+  var today = new Date().toISOString().split('T')[0];
+  c.innerHTML = '<div class="events-list">' + allEvents.map(function(ev) {
+    var status = ev.DateFrom > today ? 'Aankomend' : ev.DateTo < today ? 'Geweest' : 'Actief';
+    var statusColor = status === 'Aankomend' ? '#0369a1' : status === 'Actief' ? '#15803d' : '#6b7280';
+    var statusBg    = status === 'Aankomend' ? '#e0f2fe' : status === 'Actief' ? '#dcfce7' : '#f3f4f6';
+    return '<div class="event-row">' +
+      '<div class="ev-emoji">' + ev.Emoji + '</div>' +
+      '<div class="ev-info">' +
+        '<div class="ev-name">' + ev.Title + '</div>' +
+        '<div class="ev-meta">' + ev.DateFrom + (ev.DateTo !== ev.DateFrom ? ' — ' + ev.DateTo : '') + ' &nbsp;·&nbsp; ' + ev.Category + '</div>' +
+      '</div>' +
+      '<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:' + statusBg + ';color:' + statusColor + '">' + status + '</span>' +
+      '<div class="ev-actions">' +
+        '<button class="btn-icon" onclick="openEdit(\'' + ev.id + '\')" title="Bewerken">✏️</button>' +
+        '<button class="btn-icon del" onclick="deleteEvent(\'' + ev.id + '\')" title="Verwijderen">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
 }
 
+// ── EMOJI ────────────────────────────────────────────────
+function selEmoji(el) {
+  document.querySelectorAll('#emoji-row .emoji-opt').forEach(function(e) { e.classList.remove('sel'); });
+  el.classList.add('sel');
+  selectedEmoji = el.dataset.emoji;
+}
+function selEditEmoji(el) {
+  document.querySelectorAll('#edit-emoji-row .emoji-opt').forEach(function(e) { e.classList.remove('sel'); });
+  el.classList.add('sel');
+  selectedEditEmoji = el.dataset.emoji;
+}
 
+// ── EVENT TOEVOEGEN ─────────────────────────────────────
+function addEvent() {
+  var name = document.getElementById('ev-name').value.trim();
+  var from = document.getElementById('ev-from').value;
+  var to   = document.getElementById('ev-to').value || from;
+  var cat  = document.getElementById('ev-cat').value;
+  var err  = document.getElementById('form-err');
+  if (!name) { err.textContent = 'Vul een eventnaam in.'; return; }
+  if (!from) { err.textContent = 'Kies een begindatum.'; return; }
+  err.textContent = '';
+  var btn = document.getElementById('btn-add');
+  btn.disabled = true;
+  document.getElementById('btn-add-icon').className = 'spinner';
+  getToken().then(function(tok) {
+    return fetch(LIST_API, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { Title: name, DateFrom: from, DateTo: to, Category: cat, Emoji: selectedEmoji } })
+    });
+  }).then(function(r) {
+    if (!r.ok) throw new Error('Status ' + r.status);
+    document.getElementById('ev-name').value = '';
+    document.getElementById('ev-from').value = '';
+    document.getElementById('ev-to').value   = '';
+    showToast('Event "' + name + '" toegevoegd! ✅', 'success');
+    loadEvents();
+  }).catch(function(e) {
+    showToast('Fout: ' + e.message, 'error');
+  }).finally(function() {
+    btn.disabled = false;
+    document.getElementById('btn-add-icon').className = '';
+    document.getElementById('btn-add-icon').textContent = '✅';
+  });
+}
 
+// ── EDIT ────────────────────────────────────────────────
+function openEdit(id) {
+  var ev = allEvents.find(function(e) { return e.id === id; });
+  if (!ev) return;
+  editingId = id;
+  document.getElementById('edit-name').value = ev.Title;
+  document.getElementById('edit-from').value = ev.DateFrom;
+  document.getElementById('edit-to').value   = ev.DateTo;
+  document.getElementById('edit-cat').value  = ev.Category;
+  selectedEditEmoji = ev.Emoji;
+  document.querySelectorAll('#edit-emoji-row .emoji-opt').forEach(function(el) {
+    el.classList.toggle('sel', el.dataset.emoji === ev.Emoji);
+  });
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editingId = null;
+}
+
+function saveEdit() {
+  if (!editingId) return;
+  var name = document.getElementById('edit-name').value.trim();
+  var from = document.getElementById('edit-from').value;
+  var to   = document.getElementById('edit-to').value || from;
+  var cat  = document.getElementById('edit-cat').value;
+  if (!name || !from) { showToast('Vul alle verplichte velden in.', 'error'); return; }
+  getToken().then(function(tok) {
+    return fetch(LIST_API + '/' + editingId + '/fields', {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ Title: name, DateFrom: from, DateTo: to, Category: cat, Emoji: selectedEditEmoji })
+    });
+  }).then(function(r) {
+    if (!r.ok) throw new Error('Status ' + r.status);
+    closeModal();
+    showToast('Event bijgewerkt! ✅', 'success');
+    loadEvents();
+  }).catch(function(e) {
+    showToast('Fout: ' + e.message, 'error');
+  });
+}
+
+// ── VERWIJDEREN ─────────────────────────────────────────
+function deleteEvent(id) {
+  var ev = allEvents.find(function(e) { return e.id === id; });
+  if (!ev || !confirm('Event "' + ev.Title + '" verwijderen?')) return;
+  getToken().then(function(tok) {
+    return fetch(LIST_API + '/' + id, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + tok }
+    });
+  }).then(function() {
+    showToast('Event verwijderd.', 'success');
+    loadEvents();
+  }).catch(function(e) {
+    showToast('Fout: ' + e.message, 'error');
+  });
+}
+
+// ── TOAST ───────────────────────────────────────────────
+var toastTimer;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'success') + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+// Sluit modal bij klik buiten
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
 </body>
 </html>
