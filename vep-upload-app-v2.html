@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.4</title>
+<title>VEP Foto Upload v2.5</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -107,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.4</span>
+    <span class="badge badge-b">v2.5</span>
   </div>
 
   <div class="steps">
@@ -326,34 +326,36 @@ function getToken() {
 // UPLOAD INSTELLINGEN (geladen uit SharePoint beheer-app)
 var uploadSettings = { width: 1920, height: 1080, quality: 0.92 };
 
+var settingsLoaded = false;
+
 function loadSettings() {
-  var settingsApi = CFG.SHAREPOINT_SITE + "/_api/web/lists/getbytitle('VEPSettings')/items?$filter=Title eq 'upload_settings'";
-  getToken().then(function(tok) {
-    return fetch(settingsApi, { headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' } });
+  var SAPI = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('veptennis.sharepoint.com:/sites/VooralleVEPSharepoint-gebruikers:') + '/lists/VEPSettings/items?expand=fields(select=Title,SettingValue)';
+  return getToken().then(function(tok) {
+    return fetch(SAPI, { headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' } });
   }).then(function(r) { return r.json(); })
   .then(function(d) {
-    var items = d.value || [];
-    if (items.length > 0 && items[0].fields && items[0].fields.SettingValue) {
+    var items = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
+    if (items.length > 0 && items[0].fields.SettingValue) {
       var s = JSON.parse(items[0].fields.SettingValue);
-      if (s.width) uploadSettings.width = s.width;
-      if (s.height) uploadSettings.height = s.height;
-      if (s.quality) uploadSettings.quality = s.quality / 100;
-      // Pas canvas dimensies aan
-      CW = uploadSettings.width;
-      CH = uploadSettings.height;
-      console.log('Instellingen geladen:', uploadSettings);
+      if (s.width)   { uploadSettings.width   = s.width;   CW = s.width;   }
+      if (s.height)  { uploadSettings.height  = s.height;  CH = s.height;  }
+      if (s.quality) { uploadSettings.quality = s.quality / 100; }
+      console.log('Instellingen geladen uit SharePoint:', uploadSettings);
     }
+    settingsLoaded = true;
   }).catch(function() {
-    // Gebruik localStorage fallback
+    // Fallback: localStorage
     try {
       var stored = localStorage.getItem('vep_upload_settings');
       if (stored) {
         var s = JSON.parse(stored);
-        if (s.width) { uploadSettings.width = s.width; CW = s.width; }
-        if (s.height) { uploadSettings.height = s.height; CH = s.height; }
-        if (s.quality) uploadSettings.quality = s.quality / 100;
+        if (s.width)   { uploadSettings.width  = s.width;  CW = s.width;  }
+        if (s.height)  { uploadSettings.height = s.height; CH = s.height; }
+        if (s.quality) { uploadSettings.quality = s.quality / 100; }
+        console.log('Instellingen geladen uit localStorage:', uploadSettings);
       }
     } catch(e) {}
+    settingsLoaded = true;
   });
 }
 
@@ -441,7 +443,13 @@ function goStep(n) {
     if(i===n) s.classList.add('active');
     if(i>=n&&s.querySelector('.step-num').textContent==='✓') s.querySelector('.step-num').textContent=i;
   });
-  if(n===3) initEditor();
+  if(n===3) {
+    if (!settingsLoaded) {
+      loadSettings().then(function() { initEditor(); });
+    } else {
+      initEditor();
+    }
+  }
   if(n===4) startCompile();
 }
 function showErr(m){var b=document.getElementById('err');b.textContent=m;b.style.display='block';}
