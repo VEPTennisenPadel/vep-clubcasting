@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.9</title>
+<title>VEP Foto Upload v2.10</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -107,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.9</span>
+    <span class="badge badge-b">v2.10</span>
   </div>
 
   <div class="steps">
@@ -337,24 +337,21 @@ function loadSettings() {
     var items = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
     if (items.length > 0 && items[0].fields.SettingValue) {
       var s = JSON.parse(items[0].fields.SettingValue);
-      if (s.width)   { uploadSettings.width   = s.width;   CW = s.width;   }
-      if (s.height)  { uploadSettings.height  = s.height;  CH = s.height;  }
+      // Alleen kwaliteit uit SharePoint — afmetingen komen uit Google Slides
       if (s.quality) { uploadSettings.quality = s.quality / 100; }
-      console.log('Instellingen geladen uit SharePoint:', uploadSettings);
+      console.log('Kwaliteit geladen uit SharePoint:', uploadSettings.quality);
     }
     settingsLoaded = true;
-    // Haal ook slide-afmetingen op uit Google Slides (heeft voorrang)
+    // Haal slide-afmetingen op uit Google Slides
     return fetchSlideInfo();
   }).then(function() {
     settingsLoaded = true;
   }).catch(function() {
-    // Fallback: localStorage
+    // Fallback: localStorage (alleen kwaliteit)
     try {
       var stored = localStorage.getItem('vep_upload_settings');
       if (stored) {
         var s = JSON.parse(stored);
-        if (s.width)   { uploadSettings.width  = s.width;  CW = s.width;  }
-        if (s.height)  { uploadSettings.height = s.height; CH = s.height; }
         if (s.quality) { uploadSettings.quality = s.quality / 100; }
       }
     } catch(e) {}
@@ -369,14 +366,11 @@ function fetchSlideInfo() {
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d.success && d.widthPx && d.heightPx) {
-        uploadSettings.width  = d.widthPx;
-        uploadSettings.height = d.heightPx;
         CW = d.widthPx;
         CH = d.heightPx;
-        // Reset TB positie zodat die herberekend wordt met nieuwe CH
-        TB.y = null;
+        TB.y = null; // herbereken positie met nieuwe afmetingen
         TB.x = null;
-        console.log('Slide afmetingen geladen:', d.widthPx + 'x' + d.heightPx + 'px');
+        console.log('Slide afmetingen geladen uit Google Slides:', CW + 'x' + CH + 'px');
       }
     }).catch(function(e) {
       console.log('Slide info niet beschikbaar, gebruik ingestelde waarden');
