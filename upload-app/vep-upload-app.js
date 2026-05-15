@@ -1,263 +1,3 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.13</title>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
-.container{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:1.75rem}
-.logo{width:42px;height:42px;border-radius:var(--r);background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.header h1{font-size:17px;font-weight:700}
-.header p{font-size:13px;color:var(--m);margin-top:1px}
-.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
-.badge-g{background:var(--gl);color:var(--gd)}
-.badge-b{background:#e0f2fe;color:#0369a1;margin-left:6px}
-.steps{display:flex;gap:4px;margin-bottom:1.75rem}
-.step{flex:1;display:flex;align-items:center;gap:5px;padding:7px 9px;border-radius:var(--r);border:1px solid #e5e7eb;font-size:11px;color:var(--m);background:var(--w);transition:all .2s}
-.step.active{border-color:var(--green);color:var(--gd);background:var(--gl);font-weight:600}
-.step-num{width:17px;height:17px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-.step.active .step-num,.step.done .step-num{background:var(--green);color:#fff}
-.card{background:var(--w);border:var(--b);border-radius:var(--rl);padding:1.25rem;margin-bottom:.875rem;box-shadow:var(--sh)}
-.field{margin-bottom:1rem}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
-input[type=text],input[type=number]{padding:9px 12px;border:1px solid #d1d5db;border-radius:var(--r);font-size:14px;color:var(--t);outline:none;transition:border-color .15s;font-family:inherit}
-input[type=text]{width:100%}
-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(29,158,117,.1)}
-input[type=file]{display:none}
-.chip-row{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:var(--bg);border:1px solid #d1d5db;font-size:13px;color:var(--m);cursor:pointer;transition:all .15s;user-select:none}
-.chip:hover,.chip.sel{background:var(--gl);border-color:var(--green);color:var(--gd);font-weight:600}
-.drop-zone{border:2px dashed #d1d5db;border-radius:var(--rl);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
-.drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:var(--gl)}
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-top:1rem}
-.thumb{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;border:1px solid #e5e7eb}
-.thumb img{width:100%;height:100%;object-fit:cover}
-.thumb .rm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);border:none;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(29,158,117,.3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.events-error{font-size:13px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:8px 12px}
-.layout-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
-.lo{border:1px solid #d1d5db;border-radius:var(--r);padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s}
-.lo:hover,.lo.sel{border-color:var(--green);background:var(--gl)}
-.lt{width:100%;aspect-ratio:16/9;border-radius:4px;background:#1a1a2e;margin-bottom:5px;display:grid;gap:2px;padding:3px}
-.lt .lc{border-radius:2px;background:#3a3a6a}
-.ln{font-size:10px;color:var(--m);font-weight:600}
-.lo.sel .ln{color:var(--gd)}
-.editor-wrap{position:relative;width:100%;background:#000;border-radius:var(--r);overflow:hidden;border:1px solid #e5e7eb;touch-action:none}
-.editor-wrap canvas{display:block;width:100%;height:100%}
-.editor-hint{font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
-.editor-hint span{display:flex;align-items:center;gap:4px}
-.tb-panel{background:var(--bg);border:1px solid #e5e7eb;border-radius:var(--r);padding:.875rem;margin-top:.875rem}
-.tb-panel h4{font-size:12px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.75rem}
-.tb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem}
-.tb-field{display:flex;flex-direction:column;gap:4px}
-.tb-field label{font-size:11px;color:var(--m);font-weight:500}
-.tb-field input[type=number]{width:100%;padding:6px 8px;font-size:13px}
-.tb-field input[type=range]{width:100%;accent-color:var(--green)}
-.style-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem}
-.sc{padding:4px 10px;border-radius:20px;border:1px solid #d1d5db;font-size:12px;cursor:pointer;background:var(--w);color:var(--m);transition:all .15s}
-.sc.sel{background:var(--gl);border-color:var(--green);color:var(--gd);font-weight:600}
-.color-row{display:flex;gap:8px;align-items:center;margin-top:.5rem;flex-wrap:wrap}
-.color-row label{font-size:11px;color:var(--m);font-weight:500}
-input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer}
-.prog-list{display:flex;flex-direction:column;gap:10px}
-.prog-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--m)}
-.prog-icon{width:28px;height:28px;border-radius:50%;border:1px solid #e5e7eb;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .3s}
-.prog-item.active .prog-icon{background:var(--green);border-color:var(--green);color:#fff}
-.prog-item.done .prog-icon{background:var(--gl);border-color:var(--green);color:var(--gd)}
-.prog-item.done{color:var(--t)}
-.prog-bar-wrap{flex:1;height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden}
-.prog-bar{height:100%;background:var(--green);width:0;transition:width 1.5s ease;border-radius:2px}
-.prog-item.active .prog-bar,.prog-item.done .prog-bar{width:100%}
-.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem}
-.sum-cell{background:var(--bg);border-radius:var(--r);padding:10px 12px}
-.sum-cell p:first-child{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.sum-cell p:last-child{font-size:13px;font-weight:700}
-.recent-list{display:flex;flex-direction:column;gap:6px;margin-top:.875rem}
-.recent-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r);border:1px solid #e5e7eb;font-size:13px}
-.av{width:28px;height:28px;border-radius:50%;background:var(--gl);color:var(--gd);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.btn-row{display:flex;gap:8px;margin-top:1.25rem}
-.btn-p{flex:1;padding:11px;border-radius:var(--r);background:var(--green);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s}
-.btn-p:hover{background:var(--gd)}
-.btn-p:disabled{opacity:.4;cursor:default}
-.btn-s{padding:11px 16px;border-radius:var(--r);background:var(--w);color:var(--m);border:1px solid #d1d5db;font-size:14px;font-weight:500;cursor:pointer}
-.panel{display:none}
-.panel.active{display:block}
-.err{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:13px;color:#b91c1c;margin-bottom:.875rem;display:none}
-.swatch{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
-.swatch:hover{transform:scale(1.1)}
-.swatch.sel{border-color:#333;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div class="logo">📷</div>
-    <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
-    <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.13</span>
-  </div>
-
-  <div class="steps">
-    <div class="step active" id="s1"><div class="step-num">1</div><span>Info</span></div>
-    <div class="step" id="s2"><div class="step-num">2</div><span>Foto's</span></div>
-    <div class="step" id="s3"><div class="step-num">3</div><span>Editor</span></div>
-    <div class="step" id="s4"><div class="step-num">4</div><span>Verzenden</span></div>
-  </div>
-
-  <div class="err" id="err"></div>
-
-  <!-- STAP 1 -->
-  <div class="panel active" id="p1">
-    <div class="card">
-      <div class="field"><label>Jouw naam</label><input type="text" id="in-name" placeholder="bv. Jan Janssen" autocomplete="name"></div>
-      <div class="field">
-        <label>Event <span style="font-size:10px;color:var(--green);cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0" onclick="loadEvents()">↻</span></label>
-        <div id="events-area"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--m)"><span class="spinner"></span> Events laden...</div></div>
-      </div>
-      <div class="field"><label>Bijschrift <span style="font-weight:400;text-transform:none;letter-spacing:0">(optioneel)</span></label><input type="text" id="in-caption" placeholder="bv. Geweldige sfeer!"></div>
-    </div>
-    <div class="btn-row"><button class="btn-p" onclick="goStep(2)">Verder →</button></div>
-  </div>
-
-  <!-- STAP 2 -->
-  <div class="panel" id="p2">
-    <div class="card">
-      <div class="drop-zone" id="dz" onclick="document.getElementById('fi').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
-        <div style="font-size:2rem;margin-bottom:8px">📷</div>
-        <p style="font-size:14px;font-weight:600;margin-bottom:4px">Klik of sleep foto's</p>
-        <span style="font-size:12px;color:var(--m)">JPG, PNG, WEBP — max 20 foto's</span>
-      </div>
-      <input type="file" id="fi" multiple accept="image/*" onchange="addFiles(this.files)">
-      <div class="photo-grid" id="pg"></div>
-      <div style="display:none;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--m)" id="pinfo">
-        <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>
-        <span id="pcount"></span>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-s" onclick="goStep(1)">← Terug</button>
-      <button class="btn-p" id="btn2" onclick="goStep(3)" disabled>Verder →</button>
-    </div>
-  </div>
-
-  <!-- STAP 3: EDITOR -->
-  <div class="panel" id="p3">
-    <div class="card">
-      <div class="field">
-        <label>Layout</label>
-        <div class="layout-grid">
-          <div class="lo sel" onclick="selLayout(this,'full')"><div class="lt" style="grid-template-columns:1fr"><div class="lc"></div></div><div class="ln">Fullscreen</div></div>
-          <div class="lo" onclick="selLayout(this,'duo')"><div class="lt" style="grid-template-columns:1fr 1fr"><div class="lc"></div><div class="lc"></div></div><div class="ln">Duo</div></div>
-          <div class="lo" onclick="selLayout(this,'featured')"><div class="lt" style="grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr"><div class="lc" style="grid-row:1/3"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Featured</div></div>
-          <div class="lo" onclick="selLayout(this,'grid4')"><div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Grid</div></div>
-          <div class="lo" onclick="selLayout(this,'strip')"><div class="lt" style="grid-template-columns:1fr 1fr 1fr"><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Strip</div></div>
-          <div class="lo" onclick="selLayout(this,'mosaic')"><div class="lt" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr"><div class="lc" style="grid-column:1/3"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div><div class="lc"></div></div><div class="ln">Mozaïek</div></div>
-          <div class="lo" onclick="selLayout(this,'cinematic')"><div class="lt" style="grid-template-rows:4fr 1fr"><div class="lc"></div><div class="lc" style="opacity:.35"></div></div><div class="ln">Cinematic</div></div>
-          <div class="lo" onclick="selLayout(this,'auto')"><div class="lt" style="display:flex;align-items:center;justify-content:center"><span style="font-size:18px">✨</span></div><div class="ln">Auto</div></div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Slide editor</label>
-        <div class="editor-wrap" id="editor-wrap">
-          <canvas id="C"></canvas>
-        </div>
-        <div class="editor-hint">
-          <span>🖱️ Sleep op foto = verschuif uitsnede</span>
-          <span>⌨️ Ctrl + scroll = zoom foto</span>
-          <span>✋ Sleep titelbalk = verplaats</span>
-          <span>↔️ Sleep rand titelbalk = resize</span>
-        </div>
-      </div>
-
-      <div class="tb-panel">
-        <h4>Titelbalk instellingen</h4>
-        <div class="tb-grid">
-          <div class="tb-field"><label>Breedte (px)</label><input type="number" id="tb-w" value="1920" min="200" max="1920" oninput="render()"></div>
-          <div class="tb-field"><label>Hoogte (px)</label><input type="number" id="tb-h" value="80" min="30" max="300" oninput="render()"></div>
-        </div>
-        <div class="tb-grid">
-          <div class="tb-field"><label>Transparantie %</label><input type="number" id="tb-op" value="88" min="0" max="100" oninput="render()"></div>
-          <div class="tb-field"><label>Rotatie °</label><input type="number" id="tb-rot" value="0" min="-180" max="180" oninput="render()"></div>
-        </div>
-        <div style="margin-top:.5rem">
-          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Achtergrondkleur <span style="font-size:10px;color:#999">(VEP kleuren)</span></label>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center" id="bg-swatches">
-            <div class="swatch sel" data-color="#050514" onclick="setBgColor(this)" style="background:#050514" title="Zwart"></div>
-            <div class="swatch" data-color="#226FB7" onclick="setBgColor(this)" style="background:#226FB7" title="VEP Blauw"></div>
-            <div class="swatch" data-color="#4485C6" onclick="setBgColor(this)" style="background:#4485C6" title="Lichtblauw"></div>
-            <div class="swatch" data-color="#EBD61F" onclick="setBgColor(this)" style="background:#EBD61F" title="VEP Geel"></div>
-            <div class="swatch" data-color="#C1CD2E" onclick="setBgColor(this)" style="background:#C1CD2E" title="VEP Groen"></div>
-            <div class="swatch" data-color="#676A33" onclick="setBgColor(this)" style="background:#676A33" title="Donkergroen"></div>
-            <div class="swatch" data-color="#FFFFFF" onclick="setBgColor(this)" style="background:#FFFFFF;border:1px solid #ddd" title="Wit"></div>
-            <input type="color" id="tb-color" value="#050514" oninput="setBgColorCustom(this.value)" title="Aangepaste kleur" style="width:32px;height:32px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer">
-          </div>
-        </div>
-        <div style="margin-top:.75rem">
-          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Tekstkleur <span style="font-size:10px;color:#999">(VEP kleuren)</span></label>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center" id="text-swatches">
-            <div class="swatch sel" data-color="#FFFFFF" onclick="setTextColor(this)" style="background:#FFFFFF;border:1px solid #ddd" title="Wit"></div>
-            <div class="swatch" data-color="#EBD61F" onclick="setTextColor(this)" style="background:#EBD61F" title="VEP Geel"></div>
-            <div class="swatch" data-color="#226FB7" onclick="setTextColor(this)" style="background:#226FB7" title="VEP Blauw"></div>
-            <div class="swatch" data-color="#C1CD2E" onclick="setTextColor(this)" style="background:#C1CD2E" title="VEP Groen"></div>
-            <div class="swatch" data-color="#050514" onclick="setTextColor(this)" style="background:#050514" title="Zwart"></div>
-            <div class="swatch" data-color="#F6E521" onclick="setTextColor(this)" style="background:#F6E521" title="Helder geel"></div>
-            <input type="color" id="tb-textcolor" value="#ffffff" oninput="setTextColorCustom(this.value)" title="Aangepaste kleur" style="width:32px;height:32px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer">
-          </div>
-        </div>
-        <div style="margin-top:.75rem">
-          <label style="font-size:11px;font-weight:500;color:var(--m);display:block;margin-bottom:6px">Stijl</label>
-          <div class="style-chips">
-            <div class="sc sel" onclick="selSC(this,'elegant')">✨ Elegant</div>
-            <div class="sc" onclick="selSC(this,'bold')">💥 Bold</div>
-            <div class="sc" onclick="selSC(this,'minimal')">— Minimaal</div>
-            <div class="sc" onclick="selSC(this,'playful')">🎉 Speels</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn-s" onclick="goStep(2)">← Terug</button>
-      <button class="btn-p" onclick="goStep(4)">📊 Slide maken →</button>
-    </div>
-  </div>
-
-  <!-- STAP 4 -->
-  <div class="panel" id="p4">
-    <div class="card" id="comp-card">
-      <p style="font-size:14px;font-weight:700;margin-bottom:1rem">Compilatie wordt aangemaakt...</p>
-      <div class="prog-list" id="prog-list"></div>
-    </div>
-    <div class="card" id="ok-card" style="display:none">
-      <div style="text-align:center;padding:.5rem 0">
-        <div style="width:56px;height:56px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem">✅</div>
-        <p style="font-size:17px;font-weight:700;margin-bottom:6px">Slide toegevoegd!</p>
-        <p style="font-size:13px;color:var(--m)">De slide verschijnt binnenkort op de clubcasting bij VEP.</p>
-        <div class="sum-grid">
-          <div class="sum-cell"><p>Lid</p><p id="sm-name">—</p></div>
-          <div class="sum-cell"><p>Event</p><p id="sm-event">—</p></div>
-          <div class="sum-cell"><p>Foto's</p><p id="sm-photos">—</p></div>
-          <div class="sum-cell"><p>Layout</p><p id="sm-layout">—</p></div>
-        </div>
-        <div class="btn-row" style="margin-top:1.25rem">
-          <button class="btn-s" onclick="resetApp()">Nieuwe upload</button>
-          <button class="btn-p" style="flex:none" id="btn-open">🎬 Open presentatie</button>
-        </div>
-      </div>
-    </div>
-    <div class="card" id="rec-card" style="display:none">
-      <p style="font-size:14px;font-weight:700;margin-bottom:.5rem">Recente uploads</p>
-      <div class="recent-list" id="rec-list"></div>
-    </div>
-  </div>
-</div>
-
-<script>
 // ─────────────────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────────────────
@@ -279,7 +19,7 @@ var LIST_API = 'https://graph.microsoft.com/v1.0/sites/' + encodeURIComponent('v
 
 (function loadMSAL() {
   var s = document.createElement('script');
-  s.src = window.location.href.replace(/[^/]*$/,'') + 'msal-browser.min.js';
+  s.src = window.location.href.replace(/[^/]*$/,'') + '../shared/msal-browser.min.js';
   s.onload = initMSAL;
   s.onerror = function() {
     var s2 = document.createElement('script');
@@ -298,9 +38,49 @@ function initMSAL() {
   msalApp.initialize().then(function() {
     msalApp.handleRedirectPromise().then(function() {
       if (!msalApp.getAllAccounts().length) msalApp.loginRedirect(loginReq);
-      else loadEvents();
+      else {
+        loadUserName();
+        loadEvents();
+      }
     });
   });
+}
+
+function loadUserName() {
+  var accs = msalApp ? msalApp.getAllAccounts() : [];
+  if (!accs.length) return;
+  var account = accs[0];
+  // Probeer eerst account.name (beschikbaar via ID token)
+  var name = account.name || '';
+  if (name) {
+    setUserName(name);
+  } else {
+    // Fallback: haal naam op via Microsoft Graph
+    getToken().then(function(tok) {
+      return fetch('https://graph.microsoft.com/v1.0/me?$select=displayName', {
+        headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/json' }
+      });
+    }).then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.displayName) setUserName(d.displayName);
+    }).catch(function(){
+      // Laatste fallback: e-mailadres
+      if (account.username) {
+        var n = account.username.split('@')[0].replace(/[._]/g, ' ');
+        n = n.replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+        setUserName(n);
+      }
+    });
+  }
+}
+
+function setUserName(name) {
+  // Verwijder alles tussen haakjes, bv. "(TV VEP)"
+  name = name.replace(/\s*\(.*?\)\s*/g, '').trim();
+  var nameInput = document.getElementById('in-name');
+  if (nameInput) nameInput.value = name;
+  var badge = document.getElementById('user-badge');
+  if (badge) badge.textContent = name;
 }
 
 function getToken() {
@@ -313,6 +93,7 @@ function getToken() {
 
 // ─────────────────────────────────────────────────────────
 // UPLOAD INSTELLINGEN
+// ─────────────────────────────────────────────────────────
 var uploadSettings = { width: 1920, height: 1080, quality: 0.92 };
 var settingsLoaded = false;
 
@@ -362,10 +143,8 @@ var selectedEvent = '';
 var selectedLayout = 'full';
 var selectedStyle = 'elegant';
 
-// Titelbalk state (in canvas-pixels)
+// Titelbalk state
 var TB = { x:0, y:null, w:1920, h:80, rot:0, opacity:0.88, color:'#050514', textColor:'#ffffff' };
-
-// tbEditing: true = in stap 3 (toon handvatten), false = in stap 4 (geen handvatten)
 var tbEditing = true;
 
 // ─────────────────────────────────────────────────────────
@@ -386,10 +165,27 @@ function loadEvents() {
     evts.forEach(function(ev,i){
       var c=document.createElement('div'); c.className='chip'+(i===0?' sel':'');
       c.textContent=ev.Emoji+' '+ev.Title;
-      c.onclick=function(){document.querySelectorAll('#ec .chip').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');selectedEvent=ev.Title;};
+      c.onclick=function(){
+        document.querySelectorAll('#ec .chip').forEach(function(x){x.classList.remove('sel');});
+        c.classList.add('sel');
+        selectedEvent=ev.Title;
+        document.getElementById('custom-event-wrap').style.display='none';
+        document.getElementById('in-custom-event').value='';
+      };
       row.appendChild(c);
       if(i===0) selectedEvent=ev.Title;
     });
+    // Voeg "Ander event" chip toe aan het einde
+    var cOther=document.createElement('div'); cOther.className='chip';
+    cOther.textContent='✏️ Ander event';
+    cOther.onclick=function(){
+      document.querySelectorAll('#ec .chip').forEach(function(x){x.classList.remove('sel');});
+      cOther.classList.add('sel');
+      selectedEvent='';
+      document.getElementById('custom-event-wrap').style.display='block';
+      document.getElementById('in-custom-event').focus();
+    };
+    row.appendChild(cOther);
   }).catch(function(){a.innerHTML='<div class="events-error">Events konden niet geladen worden.</div>';});
 }
 
@@ -408,6 +204,7 @@ function addFiles(files) {
     r.readAsDataURL(f);
   });
 }
+
 function renderThumbs() {
   var g=document.getElementById('pg'); g.innerHTML='';
   photos.forEach(function(p,i){
@@ -420,24 +217,26 @@ function renderThumbs() {
   document.getElementById('pcount').textContent=n+" foto"+(n!==1?"'s":'')+" geselecteerd";
   document.getElementById('btn2').disabled=n===0;
 }
+
 function removePhoto(i){photos.splice(i,1);cropState.splice(i,1);renderThumbs();}
 function onDragOver(e){e.preventDefault();document.getElementById('dz').classList.add('drag');}
 function onDragLeave(){document.getElementById('dz').classList.remove('drag');}
 function onDrop(e){e.preventDefault();onDragLeave();addFiles(e.dataTransfer.files);}
 
 // ─────────────────────────────────────────────────────────
-// NAVIGATION
+// NAVIGATIE
 // ─────────────────────────────────────────────────────────
 function goStep(n) {
   if(n===2&&!document.getElementById('in-name').value.trim()){showErr('Vul je naam in.');return;}
-  if(n===2&&!selectedEvent){showErr('Kies een event.');return;}
+  var customEvent = document.getElementById('in-custom-event') ? document.getElementById('in-custom-event').value.trim() : '';
+  if(n===2&&!selectedEvent&&!customEvent){showErr('Kies een event of vul een eventnaam in.');return;}
+  if(n===2&&customEvent) selectedEvent=customEvent;
   clearErr();
 
-  // Bij navigeren naar stap 4: deselect titelbalk en stop interactie
   if(n===4) {
     interaction = null;
     tbEditing = false;
-    if(canvas) render(); // herteken zonder handvatten
+    if(canvas) render();
   } else {
     tbEditing = true;
   }
@@ -460,11 +259,12 @@ function goStep(n) {
   }
   if(n===4) startCompile();
 }
+
 function showErr(m){var b=document.getElementById('err');b.textContent=m;b.style.display='block';}
 function clearErr(){document.getElementById('err').style.display='none';}
 
 // ─────────────────────────────────────────────────────────
-// LAYOUT & STYLE
+// LAYOUT & STIJL
 // ─────────────────────────────────────────────────────────
 function selLayout(el,key){
   selectedLayout=key;
@@ -472,6 +272,7 @@ function selLayout(el,key){
   el.classList.add('sel');
   if(imgs.length) render();
 }
+
 function selSC(el,style){
   selectedStyle=style;
   document.querySelectorAll('.sc').forEach(function(c){c.classList.remove('sel');});
@@ -590,14 +391,14 @@ function render() {
   ctx.fillRect(-TB.w/2,-TB.h/2,TB.w,TB.h);
 
   var caption=document.getElementById('in-caption')?document.getElementById('in-caption').value:'';
-  var memberName=document.getElementById('in-name')?document.getElementById('in-name').value:'';
+  var nameInBar = document.getElementById('cb-name') ? document.getElementById('cb-name').checked : true;
+  var memberName = nameInBar && document.getElementById('in-name') ? document.getElementById('in-name').value : '';
   var titleText=caption?selectedEvent+' — '+caption:selectedEvent;
   var styles={elegant:{italic:true,bold:false},bold:{italic:false,bold:true},minimal:{italic:false,bold:false},playful:{italic:false,bold:true}};
   var st=styles[selectedStyle]||styles.elegant;
 
-  var marginX=12;
-  var nameW=memberName?Math.min(TB.w*0.2,240):0;
-  var maxTextW=TB.w-nameW-marginX*3;
+  var marginX=20;
+  var marginY=14;
 
   function wrapText(text, maxW, font) {
     ctx.font=font;
@@ -612,16 +413,26 @@ function render() {
     return lines;
   }
 
-  var fs=Math.min(TB.h*0.55, 72);
+  // Naam staat rechtsonder — reserveer ruimte onderaan als naam actief is
+  var nameFontSize = Math.min(TB.h*0.2, 28);
+  var nameLineH = nameFontSize * 1.3;
+  var nameReserved = memberName ? nameLineH + marginY : 0;
+
+  // Eventtekst vult de volledige breedte, boven de naamregel
+  var maxTextW = TB.w - marginX * 2;
+  var availH = TB.h - marginY * 2 - nameReserved;
+
+  var fs = Math.min(availH * 0.7, 72);
   var lines, font;
   do {
     font=(st.bold?'bold ':'')+( st.italic?'italic ':'')+fs+'px -apple-system,sans-serif';
     lines=wrapText(titleText, maxTextW, font);
     var totalH=lines.length*fs*1.2;
-    if(totalH<=TB.h-8 && ctx.measureText(lines[0]||'').width<=maxTextW) break;
+    if(totalH<=availH && ctx.measureText(lines[0]||'').width<=maxTextW) break;
     fs-=1;
   } while(fs>8);
 
+  // Teken eventtekst — verticaal gecentreerd in het beschikbare gebied boven de naam
   ctx.fillStyle=TB.textColor;
   ctx.font=font;
   ctx.textBaseline='middle';
@@ -629,19 +440,24 @@ function render() {
 
   var lineH=fs*1.2;
   var totalH=lines.length*lineH;
-  var startY=-totalH/2+lineH/2;
+  // Startpositie: bovenkant van beschikbaar gebied + helft van totale texthoogte
+  var textAreaTop = -TB.h/2 + marginY;
+  var textAreaH = TB.h - marginY*2 - nameReserved;
+  var startY = textAreaTop + (textAreaH - totalH)/2 + lineH/2;
   lines.forEach(function(line,i){
-    ctx.fillText(line,-TB.w/2+marginX,startY+i*lineH);
+    ctx.fillText(line, -TB.w/2+marginX, startY+i*lineH);
   });
 
+  // Naam rechtsonder — altijd op vaste positie
   if(memberName){
     ctx.textAlign='right';
-    ctx.font='italic '+(fs*0.6)+'px -apple-system,sans-serif';
+    ctx.textBaseline='bottom';
+    ctx.font='italic '+nameFontSize+'px -apple-system,sans-serif';
     ctx.fillStyle=TB.textColor+'AA';
-    ctx.fillText(memberName,TB.w/2-marginX,0);
+    ctx.fillText(memberName, TB.w/2-marginX, TB.h/2-marginY);
   }
 
-  // Handvatten alleen tonen in stap 3 (tbEditing)
+  // Handvatten alleen tonen in stap 3
   if(tbEditing) {
     ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
     ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
@@ -660,7 +476,7 @@ function hexToRgba(hex,a){
 }
 
 // ─────────────────────────────────────────────────────────
-// INTERACTIE
+// CANVAS INTERACTIE
 // ─────────────────────────────────────────────────────────
 function canvasXY(e) {
   var rect=canvas.getBoundingClientRect();
@@ -670,9 +486,7 @@ function canvasXY(e) {
   return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy};
 }
 
-function getTBRect() {
-  return {x:TB.x, y:TB.y, w:TB.w, h:TB.h};
-}
+function getTBRect() { return {x:TB.x, y:TB.y, w:TB.w, h:TB.h}; }
 
 function getResizeHandle(px,py) {
   var R=getTBRect(), m=20;
@@ -762,7 +576,7 @@ function onWheel(e) {
   var idx=hitTestPhoto(pos.x,pos.y);
   if(idx<0) return;
   var delta=e.deltaY>0?-0.05:0.05;
-  cropState[idx].zoom=Math.max(0.5,Math.min(5,( cropState[idx].zoom||1)+delta));
+  cropState[idx].zoom=Math.max(0.5,Math.min(5,(cropState[idx].zoom||1)+delta));
   render();
 }
 
@@ -785,10 +599,7 @@ document.addEventListener('DOMContentLoaded',function(){
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouchDist = Math.sqrt(dx*dx + dy*dy);
-      lastTouchMid  = {
-        clientX: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-        clientY: (e.touches[0].clientY + e.touches[1].clientY) / 2
-      };
+      lastTouchMid = { clientX:(e.touches[0].clientX+e.touches[1].clientX)/2, clientY:(e.touches[0].clientY+e.touches[1].clientY)/2 };
       interaction = null;
     }
   }, {passive:true});
@@ -801,7 +612,7 @@ document.addEventListener('DOMContentLoaded',function(){
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
       var newDist = Math.sqrt(dx*dx + dy*dy);
-      var scale   = newDist / lastTouchDist;
+      var scale = newDist / lastTouchDist;
       lastTouchDist = newDist;
       var pos = canvasXY(lastTouchMid);
       var idx = hitTestPhoto(pos.x, pos.y);
@@ -818,7 +629,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 // ─────────────────────────────────────────────────────────
-// COMPILE & SEND
+// COMPILE & VERZENDEN
 // ─────────────────────────────────────────────────────────
 var STEPS=[
   {label:"Foto's verwerken",icon:'🖼️'},
@@ -852,11 +663,12 @@ function sendSlide(){
   var c=document.getElementById('C');
   var img=c?c.toDataURL('image/jpeg',0.92):null;
   if(!img){showErr('Canvas niet beschikbaar.');return;}
+  var nameInBar = document.getElementById('cb-name') ? document.getElementById('cb-name').checked : true;
   fetch(CFG.APPS_SCRIPT_URL,{
     method:'POST',mode:'no-cors',
     headers:{'Content-Type':'text/plain'},
     body:JSON.stringify({
-      memberName:document.getElementById('in-name').value,
+      memberName: nameInBar ? document.getElementById('in-name').value : '',
       eventName:selectedEvent,
       caption:document.getElementById('in-caption').value,
       layout:selectedLayout,
@@ -884,12 +696,13 @@ function showSuccess(){
   document.getElementById('rec-list').insertBefore(row,document.getElementById('rec-list').firstChild);
 }
 
+// ─────────────────────────────────────────────────────────
+// KLEUR FUNCTIES
+// ─────────────────────────────────────────────────────────
 function setBgColor(el){
   document.querySelectorAll('#bg-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
-  el.classList.add('sel');
-  TB.color=el.dataset.color;
-  document.getElementById('tb-color').value=el.dataset.color;
-  render();
+  el.classList.add('sel'); TB.color=el.dataset.color;
+  document.getElementById('tb-color').value=el.dataset.color; render();
 }
 function setBgColorCustom(v){
   document.querySelectorAll('#bg-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
@@ -897,29 +710,31 @@ function setBgColorCustom(v){
 }
 function setTextColor(el){
   document.querySelectorAll('#text-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
-  el.classList.add('sel');
-  TB.textColor=el.dataset.color;
-  document.getElementById('tb-textcolor').value=el.dataset.color;
-  render();
+  el.classList.add('sel'); TB.textColor=el.dataset.color;
+  document.getElementById('tb-textcolor').value=el.dataset.color; render();
 }
 function setTextColorCustom(v){
   document.querySelectorAll('#text-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
   TB.textColor=v; render();
 }
 
+// ─────────────────────────────────────────────────────────
+// RESET
+// ─────────────────────────────────────────────────────────
 function resetApp(){
   photos=[];imgs=[];cropState=[];selectedLayout='full';selectedStyle='elegant';
   TB={x:0,y:null,w:1920,h:80,rot:0,opacity:0.88,color:'#050514',textColor:'#ffffff'};
   tbEditing=true;
   document.getElementById('in-name').value='';
   document.getElementById('in-caption').value='';
+  document.getElementById('cb-name').checked=true;
+  if(document.getElementById('in-custom-event')) document.getElementById('in-custom-event').value='';
+  if(document.getElementById('custom-event-wrap')) document.getElementById('custom-event-wrap').style.display='none';
   document.getElementById('pg').innerHTML='';
   document.getElementById('pinfo').style.display='none';
   document.getElementById('btn2').disabled=true;
   document.querySelectorAll('.lo').forEach(function(o,i){o.classList.toggle('sel',i===0);});
   document.querySelectorAll('.sc').forEach(function(c,i){c.classList.toggle('sel',i===0);});
+  loadUserName();
   goStep(1);
 }
-</script>
-</body>
-</html>
