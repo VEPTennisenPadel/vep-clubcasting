@@ -35,9 +35,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Voeg testbanner toe
         run: |
-          sed -i 's|<body>|<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#000;text-align:center;padding:6px;font-weight:700;font-size:13px">TESTOMGEVING</div><div style="height:32px"></div>|' vep-upload-app-v2.html
-      - name: Maak index.html
-        run: cp vep-upload-app-v2.html index.html
+          sed -i 's|<body>|<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#000;text-align:center;padding:6px;font-weight:700;font-size:13px">TESTOMGEVING</div><div style="height:32px"></div>|' upload-app/index.html
+      - name: Maak root index.html redirect naar upload-app
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=upload-app/"></head></html>' > index.html
       - name: Publiceer naar vep-clubcasting-dev repo
         uses: peaceiris/actions-gh-pages@v3
         with:
