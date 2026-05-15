@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.11</title>
+<title>VEP Foto Upload v2.12</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -40,8 +40,6 @@ input[type=file]{display:none}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(29,158,117,.3);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .events-error{font-size:13px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:8px 12px}
-
-/* ── LAYOUT PICKER ── */
 .layout-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
 .lo{border:1px solid #d1d5db;border-radius:var(--r);padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s}
 .lo:hover,.lo.sel{border-color:var(--green);background:var(--gl)}
@@ -49,14 +47,10 @@ input[type=file]{display:none}
 .lt .lc{border-radius:2px;background:#3a3a6a}
 .ln{font-size:10px;color:var(--m);font-weight:600}
 .lo.sel .ln{color:var(--gd)}
-
-/* ── CANVAS EDITOR ── */
 .editor-wrap{position:relative;width:100%;background:#000;border-radius:var(--r);overflow:hidden;border:1px solid #e5e7eb;touch-action:none}
 .editor-wrap canvas{display:block;width:100%;height:100%}
 .editor-hint{font-size:11px;color:var(--m);margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
 .editor-hint span{display:flex;align-items:center;gap:4px}
-
-/* ── TITELBALK CONTROLS ── */
 .tb-panel{background:var(--bg);border:1px solid #e5e7eb;border-radius:var(--r);padding:.875rem;margin-top:.875rem}
 .tb-panel h4{font-size:12px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.75rem}
 .tb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem}
@@ -70,8 +64,6 @@ input[type=file]{display:none}
 .color-row{display:flex;gap:8px;align-items:center;margin-top:.5rem;flex-wrap:wrap}
 .color-row label{font-size:11px;color:var(--m);font-weight:500}
 input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer}
-
-/* ── PROGRESS ── */
 .prog-list{display:flex;flex-direction:column;gap:10px}
 .prog-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--m)}
 .prog-icon{width:28px;height:28px;border-radius:50%;border:1px solid #e5e7eb;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .3s}
@@ -107,7 +99,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.11</span>
+    <span class="badge badge-b">v2.12</span>
   </div>
 
   <div class="steps">
@@ -156,7 +148,6 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
   <!-- STAP 3: EDITOR -->
   <div class="panel" id="p3">
     <div class="card">
-      <!-- Layout -->
       <div class="field">
         <label>Layout</label>
         <div class="layout-grid">
@@ -171,7 +162,6 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
         </div>
       </div>
 
-      <!-- Canvas editor -->
       <div class="field">
         <label>Slide editor</label>
         <div class="editor-wrap" id="editor-wrap">
@@ -185,7 +175,6 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
         </div>
       </div>
 
-      <!-- Titelbalk instellingen -->
       <div class="tb-panel">
         <h4>Titelbalk instellingen</h4>
         <div class="tb-grid">
@@ -323,9 +312,8 @@ function getToken() {
 }
 
 // ─────────────────────────────────────────────────────────
-// UPLOAD INSTELLINGEN (geladen uit SharePoint beheer-app)
+// UPLOAD INSTELLINGEN
 var uploadSettings = { width: 1920, height: 1080, quality: 0.92 };
-
 var settingsLoaded = false;
 
 function loadSettings() {
@@ -337,25 +325,17 @@ function loadSettings() {
     var items = (d.value||[]).filter(function(i){ return i.fields && i.fields.Title === 'upload_settings'; });
     if (items.length > 0 && items[0].fields.SettingValue) {
       var s = JSON.parse(items[0].fields.SettingValue);
-      // Alleen kwaliteit uit SharePoint — afmetingen komen uit Google Slides
       if (s.quality) { uploadSettings.quality = s.quality / 100; }
-      console.log('Kwaliteit geladen uit SharePoint:', uploadSettings.quality);
     }
     settingsLoaded = true;
-    // Haal slide-afmetingen op uit Google Slides
     return fetchSlideInfo();
   }).then(function() {
     settingsLoaded = true;
   }).catch(function() {
-    // Fallback: localStorage (alleen kwaliteit)
     try {
       var stored = localStorage.getItem('vep_upload_settings');
-      if (stored) {
-        var s = JSON.parse(stored);
-        if (s.quality) { uploadSettings.quality = s.quality / 100; }
-      }
+      if (stored) { var s = JSON.parse(stored); if (s.quality) { uploadSettings.quality = s.quality / 100; } }
     } catch(e) {}
-    // Probeer alsnog slide-info op te halen
     fetchSlideInfo().catch(function(){});
     settingsLoaded = true;
   });
@@ -366,29 +346,27 @@ function fetchSlideInfo() {
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d.success && d.widthPx && d.heightPx) {
-        CW = d.widthPx;
-        CH = d.heightPx;
-        TB.y = null; // herbereken positie met nieuwe afmetingen
-        TB.x = null;
-        console.log('Slide afmetingen geladen uit Google Slides:', CW + 'x' + CH + 'px');
+        CW = d.widthPx; CH = d.heightPx;
+        TB.y = null; TB.x = null;
       }
-    }).catch(function(e) {
-      console.log('Slide info niet beschikbaar, gebruik ingestelde waarden');
-    });
+    }).catch(function() {});
 }
 
 // ─────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────
-var photos = [];          // {name, src}
-var imgs = [];            // HTMLImageElement[]
-var cropState = [];       // {ox,oy,zoom} per foto (offset in image-pixels, zoom factor)
+var photos = [];
+var imgs = [];
+var cropState = [];
 var selectedEvent = '';
 var selectedLayout = 'full';
 var selectedStyle = 'elegant';
 
-// Titelbalk state (in canvas-pixels 1920x1080)
+// Titelbalk state (in canvas-pixels)
 var TB = { x:0, y:null, w:1920, h:80, rot:0, opacity:0.88, color:'#050514', textColor:'#ffffff' };
+
+// tbEditing: true = in stap 3 (toon handvatten), false = in stap 4 (geen handvatten)
+var tbEditing = true;
 
 // ─────────────────────────────────────────────────────────
 // EVENTS
@@ -454,6 +432,16 @@ function goStep(n) {
   if(n===2&&!document.getElementById('in-name').value.trim()){showErr('Vul je naam in.');return;}
   if(n===2&&!selectedEvent){showErr('Kies een event.');return;}
   clearErr();
+
+  // Bij navigeren naar stap 4: deselect titelbalk en stop interactie
+  if(n===4) {
+    interaction = null;
+    tbEditing = false;
+    if(canvas) render(); // herteken zonder handvatten
+  } else {
+    tbEditing = true;
+  }
+
   [1,2,3,4].forEach(function(i){
     document.getElementById('p'+i).classList.toggle('active',i===n);
     var s=document.getElementById('s'+i); s.classList.remove('active','done');
@@ -461,7 +449,9 @@ function goStep(n) {
     if(i===n) s.classList.add('active');
     if(i>=n&&s.querySelector('.step-num').textContent==='✓') s.querySelector('.step-num').textContent=i;
   });
+
   if(n===3) {
+    tbEditing = true;
     if (!settingsLoaded) {
       loadSettings().then(function() { initEditor(); });
     } else {
@@ -494,14 +484,14 @@ function selSC(el,style){
 // ─────────────────────────────────────────────────────────
 var CW=1920, CH=1080;
 var canvas, ctx;
-var interaction = null; // {type:'photo'|'tb'|'tb-resize', idx, startX,startY, startOx,startOy, startTBx,startTBy,startTBw,startTBh}
+var interaction = null;
 
 function initEditor() {
   canvas = document.getElementById('C');
   ctx = canvas.getContext('2d');
   canvas.width = CW; canvas.height = CH;
+  tbEditing = true;
 
-  // Sync TB state van inputs - reset naar defaults bij nieuwe editor sessie
   TB.opacity = 0.88;
   document.getElementById('tb-op').value = 88;
   TB.w = parseInt(document.getElementById('tb-w').value)||1920;
@@ -509,7 +499,6 @@ function initEditor() {
   TB.y = CH - TB.h;
   TB.x = (CW - TB.w) / 2;
 
-  // Laad afbeeldingen
   imgs = [];
   var pending = photos.length;
   if (!pending) { render(); return; }
@@ -521,7 +510,6 @@ function initEditor() {
 }
 
 function initCropState() {
-  // Reset crop offsets gecentreerd
   photos.forEach(function(_,i) {
     if (!cropState[i]) cropState[i]={ox:0,oy:0,zoom:1};
   });
@@ -533,9 +521,7 @@ function initCropState() {
 function getLayout() { return selectedLayout==='auto'?autoLayout():selectedLayout; }
 function autoLayout(){var n=photos.length;if(n<=1)return'full';if(n===2)return'duo';if(n===3)return'featured';return'grid4';}
 
-// Bereken foto-cellen voor huidige layout
 function getPhotoCells() {
-  // Foto's vullen altijd de VOLLEDIGE slide - titelbalk is een overlay bovenop
   var L=getLayout(), h=CH;
   var cells=[];
   if(L==='full')      cells=[{x:0,y:0,w:CW,h:CH}];
@@ -560,9 +546,7 @@ function drawPhoto(img, crop, cell) {
   var zoom=crop.zoom||1;
   var scale=Math.max(w/img.width,h/img.height)*zoom;
   var sw=img.width*scale, sh=img.height*scale;
-  // ox,oy zijn offset in canvas-pixels (hoe ver de afbeelding is verschoven)
   var ox=crop.ox||0, oy=crop.oy||0;
-  // Begrens zodat afbeelding de cel altijd vult
   var minX=w-sw, maxX=0, minY=h-sh, maxY=0;
   ox=Math.max(minX,Math.min(maxX,ox));
   oy=Math.max(minY,Math.min(maxY,oy));
@@ -575,14 +559,10 @@ function drawPhoto(img, crop, cell) {
 
 function render() {
   if(!canvas) return;
-  // Zorg dat canvas altijd overeenkomt met CW/CH
   if(canvas.width !== CW || canvas.height !== CH) {
-    canvas.width = CW;
-    canvas.height = CH;
-    TB.y = null; // reset positie bij resize
-    TB.x = null;
+    canvas.width = CW; canvas.height = CH;
+    TB.y = null; TB.x = null;
   }
-  // Sync TB state van inputs
   var tw=parseInt(document.getElementById('tb-w').value)||CW;
   var th=parseInt(document.getElementById('tb-h').value)||80;
   var top=parseInt(document.getElementById('tb-op').value); if(isNaN(top)||top===0) top=88;
@@ -592,7 +572,6 @@ function render() {
   TB.rot=trot*Math.PI/180;
   TB.color=document.getElementById('tb-color').value;
   TB.textColor=document.getElementById('tb-textcolor').value;
-  // Begrens TB binnen canvas
   TB.w = Math.min(TB.w, CW);
   if(TB.y===null || TB.y > CH || TB.y < -TB.h) TB.y = CH - TB.h;
   if(TB.x===null || TB.x > CW) TB.x = (CW - TB.w) / 2;
@@ -616,12 +595,10 @@ function render() {
   var styles={elegant:{italic:true,bold:false},bold:{italic:false,bold:true},minimal:{italic:false,bold:false},playful:{italic:false,bold:true}};
   var st=styles[selectedStyle]||styles.elegant;
 
-  // Kleine marges (was 30/200, nu 12/80)
   var marginX=12;
   var nameW=memberName?Math.min(TB.w*0.2,240):0;
   var maxTextW=TB.w-nameW-marginX*3;
 
-  // Wrap tekst in meerdere regels als nodig
   function wrapText(text, maxW, font) {
     ctx.font=font;
     var words=text.split(' ');
@@ -635,7 +612,6 @@ function render() {
     return lines;
   }
 
-  // Auto-fit lettergrootte op basis van hoogte en breedte
   var fs=Math.min(TB.h*0.55, 72);
   var lines, font;
   do {
@@ -651,7 +627,6 @@ function render() {
   ctx.textBaseline='middle';
   ctx.textAlign='left';
 
-  // Verticaal centreren van meerdere regels
   var lineH=fs*1.2;
   var totalH=lines.length*lineH;
   var startY=-totalH/2+lineH/2;
@@ -659,7 +634,6 @@ function render() {
     ctx.fillText(line,-TB.w/2+marginX,startY+i*lineH);
   });
 
-  // Naam rechts verticaal gecentreerd
   if(memberName){
     ctx.textAlign='right';
     ctx.font='italic '+(fs*0.6)+'px -apple-system,sans-serif';
@@ -667,13 +641,16 @@ function render() {
     ctx.fillText(memberName,TB.w/2-marginX,0);
   }
 
-  // Resize handvatten
-  ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
-  ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
-  [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){
-    ctx.fillStyle='rgba(255,255,255,0.75)';
-    ctx.fillRect(c[0]*(TB.w/2)-6,c[1]*(TB.h/2)-6,12,12);
-  });
+  // Handvatten alleen tonen in stap 3 (tbEditing)
+  if(tbEditing) {
+    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
+    ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
+    [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){
+      ctx.fillStyle='rgba(255,255,255,0.75)';
+      ctx.fillRect(c[0]*(TB.w/2)-6,c[1]*(TB.h/2)-6,12,12);
+    });
+  }
+
   ctx.restore();
 }
 
@@ -683,7 +660,7 @@ function hexToRgba(hex,a){
 }
 
 // ─────────────────────────────────────────────────────────
-// INTERACTIE: klik/sleep op canvas
+// INTERACTIE
 // ─────────────────────────────────────────────────────────
 function canvasXY(e) {
   var rect=canvas.getBoundingClientRect();
@@ -694,12 +671,10 @@ function canvasXY(e) {
 }
 
 function getTBRect() {
-  // Niet-geroteerd bounding box voor hit-test (vereenvoudigd)
   return {x:TB.x, y:TB.y, w:TB.w, h:TB.h};
 }
 
 function getResizeHandle(px,py) {
-  // Check hoeken (10px marge)
   var R=getTBRect(), m=20;
   var corners=[
     {name:'nw',x:R.x,y:R.y},{name:'ne',x:R.x+R.w,y:R.y},
@@ -765,13 +740,11 @@ function onMouseMove(e) {
     else if(h==='ne'){nw=Math.max(200,nw+dx);ny=interaction.startTBy+dy;nh=Math.max(30,nh-dy);}
     else if(h==='nw'){nx=interaction.startTBx+dx;ny=interaction.startTBy+dy;nw=Math.max(200,nw-dx);nh=Math.max(30,nh-dy);}
     TB.x=nx;TB.y=ny;TB.w=nw;TB.h=nh;
-    // Sync inputs
     document.getElementById('tb-w').value=Math.round(nw);
     document.getElementById('tb-h').value=Math.round(nh);
     render();
   }
 
-  // Cursor aanpassen
   var cur='default';
   var hh=getResizeHandle(pos.x,pos.y);
   if(hh) cur=hh==='nw'||hh==='se'?'nwse-resize':'nesw-resize';
@@ -793,7 +766,6 @@ function onWheel(e) {
   render();
 }
 
-// Event listeners (na canvas init)
 document.addEventListener('DOMContentLoaded',function(){
   var c=document.getElementById('C');
   c.addEventListener('mousedown',onMouseDown);
@@ -801,7 +773,7 @@ document.addEventListener('DOMContentLoaded',function(){
   c.addEventListener('mouseup',onMouseUp);
   c.addEventListener('mouseleave',onMouseUp);
   c.addEventListener('wheel',onWheel,{passive:false});
-  // Touch - Android ondersteuning
+
   var lastTouchDist = null;
   var lastTouchMid  = null;
 
@@ -810,7 +782,6 @@ document.addEventListener('DOMContentLoaded',function(){
       onMouseDown({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, button:0});
       lastTouchDist = null;
     } else if (e.touches.length === 2) {
-      // Pinch start
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
       lastTouchDist = Math.sqrt(dx*dx + dy*dy);
@@ -818,7 +789,7 @@ document.addEventListener('DOMContentLoaded',function(){
         clientX: (e.touches[0].clientX + e.touches[1].clientX) / 2,
         clientY: (e.touches[0].clientY + e.touches[1].clientY) / 2
       };
-      interaction = null; // stop drag bij pinch
+      interaction = null;
     }
   }, {passive:true});
 
@@ -827,13 +798,12 @@ document.addEventListener('DOMContentLoaded',function(){
     if (e.touches.length === 1) {
       onMouseMove({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY});
     } else if (e.touches.length === 2 && lastTouchDist !== null) {
-      // Pinch zoom op foto
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
       var newDist = Math.sqrt(dx*dx + dy*dy);
       var scale   = newDist / lastTouchDist;
       lastTouchDist = newDist;
-      var pos = getCanvasCoords(lastTouchMid);
+      var pos = canvasXY(lastTouchMid);
       var idx = hitTestPhoto(pos.x, pos.y);
       if (idx >= 0) {
         cropState[idx].zoom = Math.max(0.5, Math.min(5, (cropState[idx].zoom||1) * scale));
@@ -879,7 +849,6 @@ function startCompile(){
 }
 
 function sendSlide(){
-  // Render canvas naar JPEG
   var c=document.getElementById('C');
   var img=c?c.toDataURL('image/jpeg',0.92):null;
   if(!img){showErr('Canvas niet beschikbaar.');return;}
@@ -941,6 +910,7 @@ function setTextColorCustom(v){
 function resetApp(){
   photos=[];imgs=[];cropState=[];selectedLayout='full';selectedStyle='elegant';
   TB={x:0,y:null,w:1920,h:80,rot:0,opacity:0.88,color:'#050514',textColor:'#ffffff'};
+  tbEditing=true;
   document.getElementById('in-name').value='';
   document.getElementById('in-caption').value='';
   document.getElementById('pg').innerHTML='';
