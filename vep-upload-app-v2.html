@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEP Foto Upload v2.6</title>
+<title>VEP Foto Upload v2.7</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--green:#1D9E75;--gl:#E1F5EE;--gd:#0F6E56;--r:10px;--rl:14px;--b:1px solid #e5e7eb;--t:#111827;--m:#6b7280;--bg:#f9fafb;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.08)}
@@ -107,7 +107,7 @@ input[type=color]{width:36px;height:28px;padding:2px;border:1px solid #d1d5db;bo
     <div class="logo">📷</div>
     <div><h1>VEP Foto Compilatie</h1><p>Tennis &amp; Padel — Clubcasting</p></div>
     <span class="badge badge-g" style="margin-left:auto" id="user-badge">VEP Lid</span>
-    <span class="badge badge-b">v2.6</span>
+    <span class="badge badge-b">v2.7</span>
   </div>
 
   <div class="steps">
@@ -373,7 +373,10 @@ function fetchSlideInfo() {
         uploadSettings.height = d.heightPx;
         CW = d.widthPx;
         CH = d.heightPx;
-        console.log('Slide afmetingen geladen:', d.widthPx + 'x' + d.heightPx + 'px (' + d.widthPt + 'x' + d.heightPt + 'pt)');
+        // Reset TB positie zodat die herberekend wordt met nieuwe CH
+        TB.y = null;
+        TB.x = null;
+        console.log('Slide afmetingen geladen:', d.widthPx + 'x' + d.heightPx + 'px');
       }
     }).catch(function(e) {
       console.log('Slide info niet beschikbaar, gebruik ingestelde waarden');
