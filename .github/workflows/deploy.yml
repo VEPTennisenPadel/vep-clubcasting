@@ -19,7 +19,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-pages@v5
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Voeg testbanner toe
         run: |
-          sed -i 's|<body>|<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#000;text-align:center;padding:6px;font-weight:700;font-size:13px">⚠️ TESTOMGEVING</div><div style="height:32px"></div>|' vep-upload-app-v2.html
+          sed -i 's|<body>|<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#f59e0b;color:#000;text-align:center;padding:6px;font-weight:700;font-size:13px">TESTOMGEVING</div><div style="height:32px"></div>|' vep-upload-app-v2.html
       - name: Publiceer naar gh-pages-dev branch
         uses: peaceiris/actions-gh-pages@v3
         with:
