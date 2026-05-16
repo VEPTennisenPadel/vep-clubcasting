@@ -20,18 +20,24 @@ function toggleFullscreen() {
   var p3 = document.getElementById('p3');
   var btn = document.getElementById('fs-btn');
   if (!isFullscreen) {
-    // Ga fullscreen
     isFullscreen = true;
     wrap.classList.add('editor-fullscreen');
     p3.classList.add('editor-fullscreen-active');
-    btn.textContent = '✕';
+    btn.textContent = '✕ Sluiten';
     btn.title = 'Sluiten';
     // Probeer browser fullscreen API
     var el = document.documentElement;
     if (el.requestFullscreen) el.requestFullscreen();
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    // Herrender canvas op nieuwe afmetingen
-    setTimeout(function() { if(canvas) render(); }, 100);
+    // Forceer liggende stand op mobiel
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(function(){});
+    } else if (window.screen.lockOrientation) {
+      window.screen.lockOrientation('landscape');
+    } else if (window.screen.mozLockOrientation) {
+      window.screen.mozLockOrientation('landscape');
+    }
+    setTimeout(function() { if(canvas) render(); }, 300);
   } else {
     exitFullscreen();
   }
@@ -47,9 +53,17 @@ function exitFullscreen() {
   btn.textContent = '⛶';
   btn.title = 'Volledig scherm';
   // Verlaat browser fullscreen
-  if (document.exitFullscreen) document.exitFullscreen();
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
   else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-  setTimeout(function() { if(canvas) render(); }, 100);
+  // Zet oriëntatie terug naar portret
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  } else if (window.screen.unlockOrientation) {
+    window.screen.unlockOrientation();
+  } else if (window.screen.mozUnlockOrientation) {
+    window.screen.mozUnlockOrientation();
+  }
+  setTimeout(function() { if(canvas) render(); }, 300);
 }
 
 // Sluit fullscreen als gebruiker Escape drukt of browser fullscreen verlaat
@@ -315,6 +329,7 @@ function goStep(n) {
   if(n===4) {
     interaction = null;
     tbEditing = false;
+    tbSelected = false;
     if(canvas) render();
   } else {
     tbEditing = true;
@@ -371,13 +386,16 @@ function initEditor() {
   ctx = canvas.getContext('2d');
   canvas.width = CW; canvas.height = CH;
   tbEditing = true;
+  tbSelected = false;
 
   TB.opacity = 0.88;
   document.getElementById('tb-op').value = 88;
-  TB.w = parseInt(document.getElementById('tb-w').value)||1920;
+  TB.w = Math.round(CW * 0.5);
   TB.h = parseInt(document.getElementById('tb-h').value)||80;
   TB.y = CH - TB.h;
   TB.x = (CW - TB.w) / 2;
+  // Sync inputs met nieuwe breedte
+  document.getElementById('tb-w').value = TB.w;
 
   imgs = [];
   var pending = photos.length;
@@ -454,7 +472,7 @@ function render() {
   TB.textColor=document.getElementById('tb-textcolor').value;
   TB.w = Math.min(TB.w, CW);
   if(TB.y===null || TB.y > CH || TB.y < -TB.h) TB.y = CH - TB.h;
-  if(TB.x===null || TB.x > CW) TB.x = (CW - TB.w) / 2;
+  if(TB.x===null || TB.x > CW) TB.x = Math.round((CW - TB.w) / 2);
 
   ctx.clearRect(0,0,CW,CH);
   ctx.fillStyle='#0A0A14'; ctx.fillRect(0,0,CW,CH);
@@ -536,74 +554,10 @@ function render() {
     ctx.fillText(memberName, TB.w/2-marginX, TB.h/2-marginY);
   }
 
-  // Handvatten alleen tonen in stap 3
-  if(tbEditing) {
-    ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2; ctx.setLineDash([6,6]);
-    ctx.strokeRect(-TB.w/2,-TB.h/2,TB.w,TB.h); ctx.setLineDash([]);
-    [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(c){
-      ctx.fillStyle='rgba(255,255,255,0.75)';
-      ctx.fillRect(c[0]*(TB.w/2)-6,c[1]*(TB.h/2)-6,12,12);
-    });
-  }
+  // Titelbalk handvatten tijdelijk uitgeschakeld
 
   ctx.restore();
 
-  // Teken swap knoppen bovenop alle foto's (buiten translate/rotate context)
-  if(tbEditing && imgs.length > 1) {
-    var cells = getPhotoCells();
-    var count = Math.min(imgs.length, cells.length);
-    for(var si=0; si<count; si++) {
-      var btn = getSwapBtnPos(cells[si]);
-      var isSelected = swapIdx === si;
-      // Cirkel achtergrond
-      ctx.beginPath();
-      ctx.arc(btn.x, btn.y, btn.r, 0, Math.PI*2);
-      ctx.fillStyle = isSelected ? 'rgba(34,111,183,0.9)' : 'rgba(0,0,0,0.55)';
-      ctx.fill();
-      ctx.strokeStyle = isSelected ? '#EBD61F' : 'rgba(255,255,255,0.6)';
-      ctx.lineWidth = isSelected ? 3 : 1.5;
-      ctx.setLineDash([]);
-      ctx.stroke();
-      // Wissel-icoon (twee pijlen)
-      var s = btn.r * 0.45;
-      ctx.strokeStyle = isSelected ? '#EBD61F' : '#fff';
-      ctx.lineWidth = btn.r * 0.12;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      // Pijl links
-      ctx.beginPath();
-      ctx.moveTo(btn.x - s*0.2, btn.y - s*0.5);
-      ctx.lineTo(btn.x - s, btn.y - s*0.5);
-      ctx.lineTo(btn.x - s, btn.y + s*0.5);
-      ctx.lineTo(btn.x - s*0.2, btn.y + s*0.5);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(btn.x - s*0.7, btn.y - s*0.9);
-      ctx.lineTo(btn.x - s*0.2, btn.y - s*0.5);
-      ctx.lineTo(btn.x - s*0.7, btn.y - s*0.1);
-      ctx.stroke();
-      // Pijl rechts
-      ctx.beginPath();
-      ctx.moveTo(btn.x + s*0.2, btn.y + s*0.5);
-      ctx.lineTo(btn.x + s, btn.y + s*0.5);
-      ctx.lineTo(btn.x + s, btn.y - s*0.5);
-      ctx.lineTo(btn.x + s*0.2, btn.y - s*0.5);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(btn.x + s*0.7, btn.y + s*0.9);
-      ctx.lineTo(btn.x + s*0.2, btn.y + s*0.5);
-      ctx.lineTo(btn.x + s*0.7, btn.y + s*0.1);
-      ctx.stroke();
-      // Label
-      if(isSelected) {
-        ctx.fillStyle = '#EBD61F';
-        ctx.font = 'bold ' + Math.round(btn.r*0.35) + 'px -apple-system,sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        ctx.fillText('Kies foto', btn.x, btn.y + btn.r + 4);
-      }
-    }
-  }
 }
 
 function hexToRgba(hex,a){
@@ -615,19 +569,22 @@ function hexToRgba(hex,a){
 // CANVAS INTERACTIE
 // ─────────────────────────────────────────────────────────
 function canvasXY(e) {
-  var rect=canvas.getBoundingClientRect();
-  var sx=CW/rect.width, sy=CH/rect.height;
-  var cx=e.clientX||e.touches&&e.touches[0].clientX;
-  var cy=e.clientY||e.touches&&e.touches[0].clientY;
-  return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy};
+  var rect = canvas.getBoundingClientRect();
+  var sx = CW / rect.width;
+  var sy = CH / rect.height;
+  var src = (e.touches && e.touches[0]) || e;
+  return {
+    x: (src.clientX - rect.left) * sx,
+    y: (src.clientY - rect.top) * sy
+  };
 }
 
 function getTBRect() { return {x:TB.x, y:TB.y, w:TB.w, h:TB.h}; }
 
 function getResizeHandle(px,py) {
-  // Grotere touch zone op mobiel
   var isMobile = window.innerWidth <= 768;
-  var R=getTBRect(), m=isMobile?50:20;
+  var m = isMobile ? 30 : 16;
+  var R=getTBRect();
   var corners=[
     {name:'nw',x:R.x,y:R.y},{name:'ne',x:R.x+R.w,y:R.y},
     {name:'se',x:R.x+R.w,y:R.y+R.h},{name:'sw',x:R.x,y:R.y+R.h}
@@ -640,10 +597,7 @@ function getResizeHandle(px,py) {
 
 function hitTestTB(px,py){
   var R=getTBRect();
-  // Vergroot raakzone op mobiel met 20px aan alle kanten
-  var isMobile = window.innerWidth <= 768;
-  var m = isMobile ? 20 : 0;
-  return px>=R.x-m&&px<=R.x+R.w+m&&py>=R.y-m&&py<=R.y+R.h+m;
+  return px>=R.x&&px<=R.x+R.w&&py>=R.y&&py<=R.y+R.h;
 }
 
 function hitTestPhoto(px,py){
@@ -659,52 +613,23 @@ function onMouseDown(e) {
   if(e.button===2) return;
   var pos=canvasXY(e);
 
-  // Controleer of swap-knop is aangeklikt
-  var swapBtnIdx = hitTestSwapBtn(pos.x, pos.y);
-  if(swapBtnIdx >= 0) {
-    if(swapIdx === -1) {
-      // Eerste foto geselecteerd
-      swapIdx = swapBtnIdx;
-    } else if(swapIdx === swapBtnIdx) {
-      // Zelfde foto — deselecteer
-      swapIdx = -1;
-    } else {
-      // Tweede foto — wissel
-      swapPhotos(swapIdx, swapBtnIdx);
-      swapIdx = -1;
-    }
-    render();
-    return;
-  }
-
-  // Klik buiten swap-knop annuleert swap modus
-  if(swapIdx >= 0) { swapIdx = -1; render(); }
-
-  var handle=getResizeHandle(pos.x,pos.y);
-  if(handle){
-    interaction={type:'tb-resize',handle:handle,startX:pos.x,startY:pos.y,startTBx:TB.x,startTBy:TB.y,startTBw:TB.w,startTBh:TB.h};
-    return;
-  }
-  if(hitTestTB(pos.x,pos.y)){
-    interaction={type:'tb',startX:pos.x,startY:pos.y,startTBx:TB.x,startTBy:TB.y};
-    return;
-  }
-  var idx=hitTestPhoto(pos.x,pos.y);
-  if(idx>=0){
-    interaction={type:'photo',idx:idx,startX:pos.x,startY:pos.y,startOx:cropState[idx].ox||0,startOy:cropState[idx].oy||0};
-    return;
+  // Foto verschuiven
+  var idx = hitTestPhoto(pos.x, pos.y);
+  if(idx >= 0) {
+    interaction = {type:'photo', idx:idx, startX:pos.x, startY:pos.y,
+      startOx:cropState[idx].ox||0, startOy:cropState[idx].oy||0};
   }
 }
 
-// Swap knop positie per foto (rechtsbovenhoek van cel)
+// Swap knop positie per foto (midden-onder in elke cel)
 function getSwapBtnPos(cell) {
   var isMobile = window.innerWidth <= 768;
-  var size = isMobile ? 80 : 60;
-  return { x: cell.x + cell.w - size/2, y: cell.y + size/2, r: size/2 };
+  var r = isMobile ? 45 : 32;
+  return { x: cell.x + cell.w/2, y: cell.y + cell.h - r - 10, r: r };
 }
 
 function hitTestSwapBtn(px, py) {
-  if(imgs.length <= 1) return -1; // Geen swap bij 1 foto
+  if(photos.length <= 1) return -1; // Geen swap bij 1 foto
   var cells = getPhotoCells();
   var count = Math.min(imgs.length, cells.length);
   for(var i=0; i<count; i++) {
@@ -731,30 +656,17 @@ function onMouseMove(e) {
     cropState[interaction.idx].ox=interaction.startOx+dx;
     cropState[interaction.idx].oy=interaction.startOy+dy;
     render();
-  } else if(interaction.type==='tb'){
-    TB.x=interaction.startTBx+dx;
-    TB.y=interaction.startTBy+dy;
-    render();
-  } else if(interaction.type==='tb-resize'){
-    var h=interaction.handle;
-    var nx=interaction.startTBx, ny=interaction.startTBy, nw=interaction.startTBw, nh=interaction.startTBh;
-    if(h==='se'){nw=Math.max(200,nw+dx);nh=Math.max(30,nh+dy);}
-    else if(h==='sw'){nx=interaction.startTBx+dx;nw=Math.max(200,nw-dx);nh=Math.max(30,nh+dy);}
-    else if(h==='ne'){nw=Math.max(200,nw+dx);ny=interaction.startTBy+dy;nh=Math.max(30,nh-dy);}
-    else if(h==='nw'){nx=interaction.startTBx+dx;ny=interaction.startTBy+dy;nw=Math.max(200,nw-dx);nh=Math.max(30,nh-dy);}
-    TB.x=nx;TB.y=ny;TB.w=nw;TB.h=nh;
-    document.getElementById('tb-w').value=Math.round(nw);
-    document.getElementById('tb-h').value=Math.round(nh);
-    render();
   }
 
-  var cur='default';
-  if(hitTestSwapBtn(pos.x,pos.y)>=0) cur='pointer';
-  var hh=getResizeHandle(pos.x,pos.y);
-  if(hh) cur=hh==='nw'||hh==='se'?'nwse-resize':'nesw-resize';
-  else if(hitTestTB(pos.x,pos.y)) cur='move';
-  else if(hitTestPhoto(pos.x,pos.y)>=0) cur='grab';
-  canvas.style.cursor=cur;
+  // Cursor
+  var cur = 'default';
+  if(interaction && interaction.type==='photo') {
+    cur = 'grabbing';
+  } else {
+    if(hitTestSwapBtn(pos.x,pos.y) >= 0) cur = 'pointer';
+    else if(hitTestPhoto(pos.x,pos.y) >= 0) cur = 'grab';
+  }
+  canvas.style.cursor = cur;
 }
 
 function onMouseUp() { interaction=null; }
@@ -781,40 +693,73 @@ document.addEventListener('DOMContentLoaded',function(){
   var lastTouchDist = null;
   var lastTouchMid  = null;
 
+  var pinchStartDist = null;
+  var pinchIdx = -1;
+  var pinchStartZoom = 1;
+
   c.addEventListener('touchstart', function(e) {
+    e.preventDefault();
     if (e.touches.length === 1) {
-      onMouseDown({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY, button:0});
-      lastTouchDist = null;
+      // Schuiven
+      var t = e.touches[0];
+      var pos = canvasXY({clientX:t.clientX, clientY:t.clientY});
+      var idx = hitTestPhoto(pos.x, pos.y);
+      if (idx >= 0) {
+        interaction = {type:'photo', idx:idx, startX:pos.x, startY:pos.y,
+          startOx:cropState[idx].ox||0, startOy:cropState[idx].oy||0};
+      }
+      pinchStartDist = null;
     } else if (e.touches.length === 2) {
+      // Pinch zoom start
+      interaction = null;
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
-      lastTouchDist = Math.sqrt(dx*dx + dy*dy);
-      lastTouchMid = { clientX:(e.touches[0].clientX+e.touches[1].clientX)/2, clientY:(e.touches[0].clientY+e.touches[1].clientY)/2 };
-      interaction = null;
+      pinchStartDist = Math.sqrt(dx*dx + dy*dy);
+      // Gebruik eerste beschikbare foto
+      pinchIdx = cropState.length > 0 ? 0 : -1;
+      // Probeer ook via hitTest midden tussen vingers
+      var mid = {
+        clientX: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+        clientY: (e.touches[0].clientY + e.touches[1].clientY) / 2
+      };
+      var pos = canvasXY(mid);
+      var hitIdx = hitTestPhoto(pos.x, pos.y);
+      if (hitIdx >= 0) pinchIdx = hitIdx;
+      pinchStartZoom = pinchIdx >= 0 ? (cropState[pinchIdx].zoom || 1) : 1;
     }
-  }, {passive:true});
+  }, {passive:false});
 
   c.addEventListener('touchmove', function(e) {
     e.preventDefault();
-    if (e.touches.length === 1) {
-      onMouseMove({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY});
-    } else if (e.touches.length === 2 && lastTouchDist !== null) {
+    if (e.touches.length === 1 && interaction && interaction.type==='photo') {
+      // Schuiven
+      var t = e.touches[0];
+      var pos = canvasXY({clientX:t.clientX, clientY:t.clientY});
+      var dx = pos.x - interaction.startX;
+      var dy = pos.y - interaction.startY;
+      cropState[interaction.idx].ox = interaction.startOx + dx;
+      cropState[interaction.idx].oy = interaction.startOy + dy;
+      render();
+    } else if (e.touches.length === 2 && pinchStartDist !== null && pinchIdx >= 0) {
+      // Pinch zoom
       var dx = e.touches[0].clientX - e.touches[1].clientX;
       var dy = e.touches[0].clientY - e.touches[1].clientY;
       var newDist = Math.sqrt(dx*dx + dy*dy);
-      var scale = newDist / lastTouchDist;
-      lastTouchDist = newDist;
-      var pos = canvasXY(lastTouchMid);
-      var idx = hitTestPhoto(pos.x, pos.y);
-      if (idx >= 0) {
-        cropState[idx].zoom = Math.max(0.5, Math.min(5, (cropState[idx].zoom||1) * scale));
-        render();
-      }
+      var scale = newDist / pinchStartDist;
+      cropState[pinchIdx].zoom = Math.max(0.5, Math.min(5, pinchStartZoom * scale));
+      render();
     }
   }, {passive:false});
 
   c.addEventListener('touchend', function(e) {
-    if (e.touches.length === 0) { onMouseUp(); lastTouchDist = null; }
+    if (e.touches.length === 0) {
+      interaction = null;
+      pinchStartDist = null;
+    }
+  });
+  c.addEventListener('touchcancel', function() {
+    interaction = null;
+    pinchStartDist = null;
   });
 });
 
@@ -913,8 +858,9 @@ function setTextColorCustom(v){
 // ─────────────────────────────────────────────────────────
 function resetApp(){
   photos=[];imgs=[];cropState=[];selectedLayout='full';selectedStyle='elegant';
-  TB={x:0,y:null,w:1920,h:80,rot:0,opacity:0.88,color:'#050514',textColor:'#ffffff'};
+  TB={x:Math.round((CW-CW*0.5)/2),y:null,w:Math.round(CW*0.5),h:80,rot:0,opacity:0.88,color:'#050514',textColor:'#ffffff'};
   tbEditing=true;
+  tbSelected=false;
   swapIdx=-1;
   document.getElementById('in-name').value='';
   document.getElementById('in-caption').value='';
