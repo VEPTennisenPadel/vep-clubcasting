@@ -397,6 +397,10 @@ function initEditor() {
   // Sync inputs met nieuwe breedte
   document.getElementById('tb-w').value = TB.w;
 
+  // Toon wissel UI alleen bij meerdere foto's
+  var wisselWrap = document.getElementById('wissel-wrap');
+  if(wisselWrap) wisselWrap.style.display = photos.length > 1 ? 'flex' : 'none';
+
   imgs = [];
   var pending = photos.length;
   if (!pending) { render(); return; }
@@ -554,6 +558,35 @@ function render() {
     ctx.fillText(memberName, TB.w/2-marginX, TB.h/2-marginY);
   }
 
+  // Teken framenummers altijd in stap 3
+  if(photos.length > 1) {
+    var cells = getPhotoCells();
+    var count = Math.min(photos.length, cells.length);
+    for(var fi=0; fi<count; fi++) {
+      var cell = cells[fi];
+      var nr = fi + 1;
+      // Vaste grootte ongeacht celgrootte
+      var r = 30;
+      var cx2 = cell.x + r + 12;
+      var cy2 = cell.y + r + 12;
+      // Schaduw voor zichtbaarheid
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = 6;
+      // Cirkel
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(34,111,183,0.92)';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // Nummer
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px -apple-system,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(nr, cx2, cy2);
+    }
+    ctx.shadowBlur = 0;
+  }
   // Titelbalk handvatten tijdelijk uitgeschakeld
 
   ctx.restore();
@@ -851,6 +884,40 @@ function setTextColor(el){
 function setTextColorCustom(v){
   document.querySelectorAll('#text-swatches .swatch').forEach(function(s){s.classList.remove('sel');});
   TB.textColor=v; render();
+}
+
+// ─────────────────────────────────────────────────────────
+// FOTO WISSELEN
+// ─────────────────────────────────────────────────────────
+function wisselFoto() {
+  var vanInput = document.getElementById('wissel-van');
+  var naarInput = document.getElementById('wissel-naar');
+  var van = parseInt(vanInput.value) - 1;
+  var naar = parseInt(naarInput.value) - 1;
+  var maxIdx = Math.min(photos.length, getPhotoCells().length) - 1;
+
+  if(!vanInput.value.trim() || !naarInput.value.trim() || isNaN(van) || isNaN(naar)) {
+    alert('Vul twee framenummers in.'); return; }
+  if(van < 0 || van > maxIdx || naar < 0 || naar > maxIdx) {
+    alert('Framenummers moeten tussen 1 en ' + (maxIdx+1) + ' liggen.'); return; }
+  if(van === naar) { alert('Kies twee verschillende frames.'); return; }
+
+  // Wissel foto's en cropState
+  var tmpPhoto = photos[van]; photos[van] = photos[naar]; photos[naar] = tmpPhoto;
+  var tmpCrop = cropState[van]; cropState[van] = cropState[naar]; cropState[naar] = tmpCrop;
+
+  // Herlaad imgs array in juiste volgorde
+  imgs = [];
+  var pending = photos.length;
+  photos.forEach(function(p, i) {
+    var im = new Image();
+    im.onload = function() { imgs[i] = im; pending--; if(!pending) render(); };
+    im.src = p.src;
+  });
+
+  // Reset invoervelden
+  vanInput.value = '';
+  naarInput.value = '';
 }
 
 // ─────────────────────────────────────────────────────────
