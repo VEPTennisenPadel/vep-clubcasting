@@ -1,6 +1,8 @@
 // ─────────────────────────────────────────────────────────
 // EDITOR — Canvas setup, render, titelbalk, framenummers
 // ─────────────────────────────────────────────────────────
+var exporting = false;
+
 function initEditor() {
   canvas = document.getElementById('C');
   ctx = canvas.getContext('2d');
@@ -16,6 +18,7 @@ function initEditor() {
   TB.x = (CW - TB.w) / 2;
   document.getElementById('tb-w').value = TB.w;
 
+  buildLayoutGrid();
   var wisselWrap = document.getElementById('wissel-wrap');
   if(wisselWrap) wisselWrap.style.display = photos.length > 1 ? 'flex' : 'none';
 
@@ -41,12 +44,16 @@ function hexToRgba(hex,a){
 }
 
 function drawPhoto(img, crop, cell) {
-  var x=cell.x,y=cell.y,w=cell.w,h=cell.h;
+  var x=cell.x, y=cell.y, w=cell.w, h=cell.h;
+  var isCircle = cell.clip === 'circle';
   if(!img){
+    ctx.save();
+    ctx.beginPath();
+    if(isCircle) ctx.arc(x+w/2, y+h/2, Math.min(w,h)/2, 0, Math.PI*2);
+    else ctx.rect(x,y,w,h);
+    ctx.clip();
     ctx.fillStyle='#1a1a3a'; ctx.fillRect(x,y,w,h);
-    ctx.fillStyle='#333366'; ctx.font='60px sans-serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('📷',x+w/2,y+h/2);
+    ctx.restore();
     return;
   }
   var zoom=crop.zoom||1;
@@ -58,8 +65,15 @@ function drawPhoto(img, crop, cell) {
   oy=Math.max(minY,Math.min(maxY,oy));
   crop.ox=ox; crop.oy=oy;
   ctx.save();
-  ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.beginPath();
+  if(isCircle) ctx.arc(x+w/2, y+h/2, Math.min(w,h)/2, 0, Math.PI*2);
+  else ctx.rect(x,y,w,h);
+  ctx.clip();
   ctx.drawImage(img,x+ox,y+oy,sw,sh);
+  // Cirkel rand
+  if(isCircle) {
+    ctx.strokeStyle='white'; ctx.lineWidth=8; ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -147,8 +161,8 @@ function render() {
   }
   ctx.restore();
 
-  // Framenummers
-  if(photos.length > 1) {
+  // Framenummers (alleen in editor, niet in de geëxporteerde slide)
+  if(photos.length > 1 && !exporting) {
     var fcells=getPhotoCells();
     var count=Math.min(photos.length,fcells.length);
     for(var fi=0;fi<count;fi++){
